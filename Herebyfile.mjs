@@ -70,3 +70,13 @@ export const checkFormat = task({
         await $`dprint check`;
     },
 });
+
+export const postinstall = task({
+    name: "postinstall",
+    hiddenFromTaskList: true,
+    run: () => {
+        // Ensure the go command doesn't waste time looking into node_modules.
+        // Remove once https://github.com/golang/go/issues/42965 is fixed.
+        fs.writeFileSync(path.join(__dirname, "node_modules", "go.mod"), `module example.org/ignoreme\n`);
+    },
+});
