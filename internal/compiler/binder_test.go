@@ -1,18 +1,15 @@
 package compiler
 
 import (
-	"os"
 	"runtime"
 	"testing"
 )
 
 func BenchmarkBind(b *testing.B) {
-	fileName := "../../_submodules/TypeScript/src/compiler/checker.ts"
-	bytes, err := os.ReadFile(fileName)
-	if err != nil {
-		b.Error(err)
-	}
-	sourceText := string(bytes)
+	srcCompilerCheckerTS.SkipIfNotExist(b)
+
+	fileName := srcCompilerCheckerTS.Path()
+	sourceText := srcCompilerCheckerTS.ReadFile(b)
 
 	sourceFiles := make([]*SourceFile, b.N)
 	for i := 0; i < b.N; i++ {

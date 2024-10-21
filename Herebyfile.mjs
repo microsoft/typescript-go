@@ -45,7 +45,6 @@ export const generate = task({
 export const test = task({
     name: "test",
     run: async () => {
-        assertTypeScriptCloned();
         await $`go test -bench=. -benchtime=1x ./...`;
     },
 });
