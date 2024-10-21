@@ -23,14 +23,13 @@ function assertTypeScriptCloned() {
     }
     catch {}
 
-    console.error("_submodules/TypeScript does not exist; try running `git submodule update --init --recursive`");
-    process.exit(1);
+    throw new Error("_submodules/TypeScript does not exist; try running `git submodule update --init --recursive`");
 }
 
 export const build = task({
     name: "build",
     run: async () => {
-        await $`go build ./...`;
+        await $`go build -o ./bin/ ./cmd/...`;
     },
 });
 
