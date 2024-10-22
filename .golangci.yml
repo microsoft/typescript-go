@@ -8,7 +8,7 @@ linters:
     # - unparam
     - unconvert
     - prealloc
-    # - errcheck
+    - errcheck
     # - staticcheck
 
     # Maybe
