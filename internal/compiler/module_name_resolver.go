@@ -239,7 +239,7 @@ func NewModuleResolver(host ModuleResolutionHost, cache ModuleResolutionCache, o
 }
 
 func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile string, resolutionMode ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModuleWithFailedLookupLocations {
-	traceEnabled := isTraceEnabled(r.compilerOptions)
+	traceEnabled := r.compilerOptions.TraceResolution == TSTrue
 	if redirectedReference != nil {
 		r.compilerOptions = redirectedReference.commandLine.options
 	}
@@ -264,11 +264,11 @@ func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile str
 		if moduleResolution == ModuleResolutionKindUnknown {
 			moduleResolution = getEmitModuleResolutionKind(r.compilerOptions)
 			if traceEnabled {
-				r.host.Trace(formatMessage(diagnostics.Module_resolution_kind_is_not_specified_using_0, formatModuleResolutionKind(moduleResolution)))
+				r.host.Trace(formatMessage(diagnostics.Module_resolution_kind_is_not_specified_using_0, moduleResolution.String()))
 			}
 		} else {
 			if traceEnabled {
-				r.host.Trace(formatMessage(diagnostics.Explicitly_specified_module_resolution_kind_Colon_0, formatModuleResolutionKind(moduleResolution)))
+				r.host.Trace(formatMessage(diagnostics.Explicitly_specified_module_resolution_kind_Colon_0, moduleResolution.String()))
 			}
 		}
 
@@ -339,8 +339,4 @@ func getConditions(options *CompilerOptions, resolutionMode ResolutionMode) []st
 	}
 	conditions = concatenate(conditions, options.CustomConditions)
 	return conditions
-}
-
-func isTraceEnabled(options *CompilerOptions) bool {
-	return options.TraceResolution == TSTrue
 }
