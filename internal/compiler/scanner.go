@@ -330,9 +330,9 @@ func (s *Scanner) error(diagnostic *diagnostics.Message) {
 	s.errorAt(diagnostic, s.pos, 0)
 }
 
-func (s *Scanner) errorAt(diagnostic *diagnostics.Message, pos int, len int, args ...any) {
+func (s *Scanner) errorAt(diagnostic *diagnostics.Message, pos int, length int, args ...any) {
 	if s.onError != nil {
-		s.onError(diagnostic, pos, len, args...)
+		s.onError(diagnostic, pos, length, args...)
 	}
 }
 

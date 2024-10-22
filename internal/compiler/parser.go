@@ -90,8 +90,8 @@ func ParseSourceFile(fileName string, sourceText string, languageVersion ScriptT
 	return p.parseSourceFileWorker()
 }
 
-func (p *Parser) scanError(message *diagnostics.Message, pos int, len int, args ...any) {
-	p.parseErrorAtRange(NewTextRange(pos, pos+len), message, args...)
+func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, args ...any) {
+	p.parseErrorAtRange(NewTextRange(pos, pos+length), message, args...)
 }
 
 func (p *Parser) parseErrorAt(pos int, end int, message *diagnostics.Message, args ...any) *Diagnostic {
@@ -245,10 +245,10 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if opening token wasn't found
 // or parseElement returned nil
-func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *Node, open SyntaxKind, close SyntaxKind) []*Node {
-	if p.parseExpected(open) {
+func (p *Parser) parseBracketedList(kind ParsingContext, parseElement func(p *Parser) *Node, opening SyntaxKind, closing SyntaxKind) []*Node {
+	if p.parseExpected(opening) {
 		result := p.parseDelimitedList(kind, parseElement)
-		p.parseExpected(close)
+		p.parseExpected(closing)
 		return result
 	}
 	return nil

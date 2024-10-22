@@ -33,6 +33,7 @@ linters:
     - paralleltest
     - perfsprint
     - prealloc
+    - predeclared
     - reassign
     - tenv
     - testableexamples
@@ -48,10 +49,8 @@ linters:
 
     # Check
     # - exhaustive
-    # - goconst
     # - gocritic
     # - gosec
-    # - predeclared
     # - revive
     # - staticcheck
     # - stylecheck
