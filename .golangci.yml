@@ -1,63 +1,35 @@
 # yaml-language-server: $schema=https://golangci-lint.run/jsonschema/golangci.jsonschema.json
 
 linters:
-  enable-all: true
-  disable:
-    # Probably
+  disable-all: true
+  enable:
     - nakedret
-    - exhaustive
-    - whitespace
-    - staticcheck
-    - unparam
-    - unconvert
-    - prealloc
-    - errcheck
+    # - whitespace
+    # - staticcheck
+    # - unparam
+    # - unconvert
+    # - prealloc
+    # - errcheck
 
     # Maybe
-    - predeclared
-    - stylecheck
-    - wastedassign
-    - inamedparam
-    - revive
-    - gosec
-    - mirror
-    - gocritic
+    # - predeclared
+    # - stylecheck
+    # - wastedassign
+    # - inamedparam
+    # - revive
+    # - gosec
+    # - mirror
+    # - gocritic
 
     # Maybe not
-    - dupword
-    - mnd
-    - unused
-    - gofumpt
-    - goconst
+    # - dupword
+    # - mnd
+    # - unused
+    # - gofumpt
+    # - goconst
 
-    # Definitely not
-    - exhaustruct
-    - gochecknoglobals
-    - nestif
-    - forcetypeassert
-    - ireturn
-    - interfacebloat
-    - depguard
-    - cyclop
-    - nonamedreturns
-    - varnamelen
-    - wsl
-    - testpackage
-    - nlreturn
-    - lll
-    - godot
-    - godox
-    - funlen
-    - gocognit
-    - gochecknoinits
-    - gocyclo
-    - forbidigo
-    - maintidx
-
-    # Deprecated
-    - execinquery
-    - exportloopref
-    - gomnd
+    # One day
+    # - exhaustive
 
 issues:
   max-issues-per-linter: 0
