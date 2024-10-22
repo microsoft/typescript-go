@@ -3,34 +3,72 @@
 linters:
   disable-all: true
   enable:
-    # TODO(jakebailey): list everything out manually and choose; the below are just the ones that error'dx
-    - nakedret
-    - whitespace
-    # - unparam
-    - unconvert
-    - prealloc
-    - errcheck
-    # - staticcheck
-
-    # Maybe
-    # - predeclared
-    # - stylecheck
-    # - wastedassign
+    # Enabled
+    - asasalint
     - inamedparam
-    # - revive
-    # - gosec
+    - nakedret
+    - govet
+    - bidichk
+    - bodyclose
+    - canonicalheader
+    - copyloopvar
+    - durationcheck
+    - err113
+    - errcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - fatcontext
+    - gci
+    - gocheckcompilerdirectives
+    - goprintffuncname
+    - gosimple
+    - grouper
+    - ineffassign
+    - intrange
+    - makezero
     - mirror
-    # - gocritic
+    - musttag
+    - nolintlint
+    - paralleltest
+    - perfsprint
+    - prealloc
+    - reassign
+    - tenv
+    - testableexamples
+    - thelper
+    - tparallel
+    - unconvert
+    - usestdlibvars
+    - whitespace
+    - wrapcheck
 
-    # Maybe not
-    # - dupword
-    # - mnd
-    # - unused
-    # - gofumpt
-    # - goconst
+    # Need to add headers
+    # - goheader
 
-    # One day
+    # Check
+    # - dupl
     # - exhaustive
+    # - goconst
+    # - gocritic
+    # - gosec
+    # - ireturn
+    # - mnd
+    # - predeclared
+    # - revive
+    # - staticcheck
+    # - stylecheck
+    # - testifylint
+    # - unparam
+    # - unused
+    # - wastedassign
+
+# linters-settings:
+#   revive:
+#     enable-all-rules: true
+#     rules:
+#       - name: unused-parameter
+#         disabled: true
 
 issues:
   max-issues-per-linter: 0
