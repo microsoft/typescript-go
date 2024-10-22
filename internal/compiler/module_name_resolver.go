@@ -148,6 +148,12 @@ type PathAndPackageId struct {
 	packageId PackageId
 }
 
+type PathAndExtension struct {
+	path                     string
+	ext                      string
+	resolvedUsingTsExtension bool
+}
+
 type Extensions int32
 
 const (
@@ -159,24 +165,18 @@ const (
 	ExtensionsImplementationFiles = ExtensionsTypeScript | ExtensionsJavaScript
 )
 
-type PathAndExtension struct {
-	path                     string
-	ext                      string
-	resolvedUsingTsExtension bool
-}
-
-func formatExtensions(extensions Extensions) string {
-	result := make([]string, 0, bits.OnesCount(uint(extensions)))
-	if extensions&ExtensionsTypeScript != 0 {
+func (e Extensions) String() string {
+	result := make([]string, 0, bits.OnesCount(uint(e)))
+	if e&ExtensionsTypeScript != 0 {
 		result = append(result, "TypeScript")
 	}
-	if extensions&ExtensionsJavaScript != 0 {
+	if e&ExtensionsJavaScript != 0 {
 		result = append(result, "JavaScript")
 	}
-	if extensions&ExtensionsDeclaration != 0 {
+	if e&ExtensionsDeclaration != 0 {
 		result = append(result, "Declaration")
 	}
-	if extensions&ExtensionsJson != 0 {
+	if e&ExtensionsJson != 0 {
 		result = append(result, "JSON")
 	}
 	return strings.Join(result, ", ")
