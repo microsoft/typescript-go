@@ -3105,6 +3105,10 @@ func pathIsRelative(path string) bool {
 	return makeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
 }
 
+func extensionIsTs(ext string) bool {
+	return ext == ExtensionTs || ext == ExtensionTsx || ext == ExtensionDts || ext == ExtensionMts || ext == ExtensionDmts || ext == ExtensionCts || ext == ExtensionDcts || ext[:3] == ".d." && ext[len(ext)-3:] == ".ts"
+}
+
 func isShorthandAmbientModuleSymbol(moduleSymbol *Symbol) bool {
 	return isShorthandAmbientModule(moduleSymbol.valueDeclaration)
 }
