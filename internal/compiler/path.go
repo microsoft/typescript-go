@@ -38,12 +38,12 @@ func isVolumeCharacter(char byte) bool {
 }
 
 func getFileUrlVolumeSeparatorEnd(url string, start int) int {
-	ch0 := rune(url[start])
+	ch0 := url[start]
 	if ch0 == ':' {
 		return start + 1
 	}
-	if ch0 == '%' && rune(url[start+1]) == '3' {
-		ch2 := rune(url[start+2])
+	if ch0 == '%' && url[start+1] == '3' {
+		ch2 := url[start+2]
 		if ch2 == 'a' || ch2 == 'A' {
 			return start + 3
 		}
@@ -63,7 +63,7 @@ func getEncodedRootLength(path string) int {
 			return 1 // POSIX: "/" (or non-normalized "\")
 		}
 
-		p1 := strings.Index(path[2:], string(ch0))
+		p1 := strings.IndexByte(path[2:], ch0)
 		if p1 < 0 {
 			return len(path) // UNC: "//server" or "\\server"
 		}

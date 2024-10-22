@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"fmt"
+	"math/bits"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
@@ -165,7 +166,7 @@ type PathAndExtension struct {
 }
 
 func formatExtensions(extensions Extensions) string {
-	result := []string{}
+	result := make([]string, 0, bits.OnesCount(uint(extensions)))
 	if extensions&ExtensionsTypeScript != 0 {
 		result = append(result, "TypeScript")
 	}
@@ -275,19 +276,16 @@ func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile str
 		switch moduleResolution {
 		case ModuleResolutionKindNode16:
 			result = r.resolveNode16(moduleName, containingFile, resolutionMode, redirectedReference)
-			break
 		case ModuleResolutionKindNodeNext:
 			result = r.resolveNodeNext(moduleName, containingFile, resolutionMode, redirectedReference)
-			break
 		case ModuleResolutionKindBundler:
 			var conditions []string
 			if resolutionMode != ModuleKindNone {
 				conditions = getConditions(r.compilerOptions, resolutionMode)
 			}
 			result = r.resolveBundler(moduleName, containingFile, resolutionMode, redirectedReference, conditions)
-			break
 		default:
-			panic(fmt.Sprintf("Unexpected moduleResolution: %s", moduleResolution))
+			panic(fmt.Sprintf("Unexpected moduleResolution: %d", moduleResolution))
 		}
 
 		if r.cache != nil && !r.cache.isReadonly() {
