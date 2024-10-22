@@ -7,7 +7,7 @@ linters:
     - whitespace
     # - unparam
     - unconvert
-    # - prealloc
+    - prealloc
     # - errcheck
     # - staticcheck
 

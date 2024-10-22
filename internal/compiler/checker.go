@@ -276,7 +276,7 @@ func (c *Checker) getStrictOptionValue(value Tristate) bool {
 func (c *Checker) initializeChecker() {
 	c.program.bindSourceFiles()
 	// Initialize global symbol table
-	var augmentations [][]*Node
+	augmentations := make([][]*Node, 0, len(c.files))
 	for _, file := range c.files {
 		if !isExternalOrCommonJsModule(file) {
 			c.mergeSymbolTable(c.globals, file.locals, false, nil)
