@@ -426,397 +426,755 @@ const (
 
 func (kind SyntaxKind) String() string {
 	switch kind {
-case SyntaxKindUnknown: return "SyntaxKindUnknown"
-	case SyntaxKindEndOfFile: return "SyntaxKindEndOfFile"
-	
-case SyntaxKindConflictMarkerTrivia: return "SyntaxKindConflictMarkerTrivia"
-	case SyntaxKindNonTextFileMarkerTrivia: return "SyntaxKindNonTextFileMarkerTrivia"
-	case SyntaxKindNumericLiteral: return "SyntaxKindNumericLiteral"
-	case SyntaxKindBigintLiteral: return "SyntaxKindBigintLiteral"
-	case SyntaxKindStringLiteral: return "SyntaxKindStringLiteral"
-	case SyntaxKindJsxText: return "SyntaxKindJsxText"
-	case SyntaxKindJsxTextAllWhiteSpaces: return "SyntaxKindJsxTextAllWhiteSpaces"
-	case SyntaxKindRegularExpressionLiteral: return "SyntaxKindRegularExpressionLiteral"
-	case SyntaxKindNoSubstitutionTemplateLiteral: return "SyntaxKindNoSubstitutionTemplateLiteral"
+	case SyntaxKindUnknown:
+		return "SyntaxKindUnknown"
+	case SyntaxKindEndOfFile:
+		return "SyntaxKindEndOfFile"
+
+	case SyntaxKindConflictMarkerTrivia:
+		return "SyntaxKindConflictMarkerTrivia"
+	case SyntaxKindNonTextFileMarkerTrivia:
+		return "SyntaxKindNonTextFileMarkerTrivia"
+	case SyntaxKindNumericLiteral:
+		return "SyntaxKindNumericLiteral"
+	case SyntaxKindBigintLiteral:
+		return "SyntaxKindBigintLiteral"
+	case SyntaxKindStringLiteral:
+		return "SyntaxKindStringLiteral"
+	case SyntaxKindJsxText:
+		return "SyntaxKindJsxText"
+	case SyntaxKindJsxTextAllWhiteSpaces:
+		return "SyntaxKindJsxTextAllWhiteSpaces"
+	case SyntaxKindRegularExpressionLiteral:
+		return "SyntaxKindRegularExpressionLiteral"
+	case SyntaxKindNoSubstitutionTemplateLiteral:
+		return "SyntaxKindNoSubstitutionTemplateLiteral"
 	// Pseudo-literals
-	case SyntaxKindTemplateHead: return "SyntaxKindTemplateHead"
-	case SyntaxKindTemplateMiddle: return "SyntaxKindTemplateMiddle"
-	case SyntaxKindTemplateTail: return "SyntaxKindTemplateTail"
+	case SyntaxKindTemplateHead:
+		return "SyntaxKindTemplateHead"
+	case SyntaxKindTemplateMiddle:
+		return "SyntaxKindTemplateMiddle"
+	case SyntaxKindTemplateTail:
+		return "SyntaxKindTemplateTail"
 	// Punctuation
-	case SyntaxKindOpenBraceToken: return "SyntaxKindOpenBraceToken"
-	case SyntaxKindCloseBraceToken: return "SyntaxKindCloseBraceToken"
-	case SyntaxKindOpenParenToken: return "SyntaxKindOpenParenToken"
-	case SyntaxKindCloseParenToken: return "SyntaxKindCloseParenToken"
-	case SyntaxKindOpenBracketToken: return "SyntaxKindOpenBracketToken"
-	case SyntaxKindCloseBracketToken: return "SyntaxKindCloseBracketToken"
-	case SyntaxKindDotToken: return "SyntaxKindDotToken"
-	case SyntaxKindDotDotDotToken: return "SyntaxKindDotDotDotToken"
-	case SyntaxKindSemicolonToken: return "SyntaxKindSemicolonToken"
-	case SyntaxKindCommaToken: return "SyntaxKindCommaToken"
-	case SyntaxKindQuestionDotToken: return "SyntaxKindQuestionDotToken"
-	case SyntaxKindLessThanToken: return "SyntaxKindLessThanToken"
-	case SyntaxKindLessThanSlashToken: return "SyntaxKindLessThanSlashToken"
-	case SyntaxKindGreaterThanToken: return "SyntaxKindGreaterThanToken"
-	case SyntaxKindLessThanEqualsToken: return "SyntaxKindLessThanEqualsToken"
-	case SyntaxKindGreaterThanEqualsToken: return "SyntaxKindGreaterThanEqualsToken"
-	case SyntaxKindEqualsEqualsToken: return "SyntaxKindEqualsEqualsToken"
-	case SyntaxKindExclamationEqualsToken: return "SyntaxKindExclamationEqualsToken"
-	case SyntaxKindEqualsEqualsEqualsToken: return "SyntaxKindEqualsEqualsEqualsToken"
-	case SyntaxKindExclamationEqualsEqualsToken: return "SyntaxKindExclamationEqualsEqualsToken"
-	case SyntaxKindEqualsGreaterThanToken: return "SyntaxKindEqualsGreaterThanToken"
-	case SyntaxKindPlusToken: return "SyntaxKindPlusToken"
-	case SyntaxKindMinusToken: return "SyntaxKindMinusToken"
-	case SyntaxKindAsteriskToken: return "SyntaxKindAsteriskToken"
-	case SyntaxKindAsteriskAsteriskToken: return "SyntaxKindAsteriskAsteriskToken"
-	case SyntaxKindSlashToken: return "SyntaxKindSlashToken"
-	case SyntaxKindPercentToken: return "SyntaxKindPercentToken"
-	case SyntaxKindPlusPlusToken: return "SyntaxKindPlusPlusToken"
-	case SyntaxKindMinusMinusToken: return "SyntaxKindMinusMinusToken"
-	case SyntaxKindLessThanLessThanToken: return "SyntaxKindLessThanLessThanToken"
-	case SyntaxKindGreaterThanGreaterThanToken: return "SyntaxKindGreaterThanGreaterThanToken"
-	case SyntaxKindGreaterThanGreaterThanGreaterThanToken: return "SyntaxKindGreaterThanGreaterThanGreaterThanToken"
-	case SyntaxKindAmpersandToken: return "SyntaxKindAmpersandToken"
-	case SyntaxKindBarToken: return "SyntaxKindBarToken"
-	case SyntaxKindCaretToken: return "SyntaxKindCaretToken"
-	case SyntaxKindExclamationToken: return "SyntaxKindExclamationToken"
-	case SyntaxKindTildeToken: return "SyntaxKindTildeToken"
-	case SyntaxKindAmpersandAmpersandToken: return "SyntaxKindAmpersandAmpersandToken"
-	case SyntaxKindBarBarToken: return "SyntaxKindBarBarToken"
-	case SyntaxKindQuestionToken: return "SyntaxKindQuestionToken"
-	case SyntaxKindColonToken: return "SyntaxKindColonToken"
-	case SyntaxKindAtToken: return "SyntaxKindAtToken"
-	case SyntaxKindQuestionQuestionToken: return "SyntaxKindQuestionQuestionToken"
+	case SyntaxKindOpenBraceToken:
+		return "SyntaxKindOpenBraceToken"
+	case SyntaxKindCloseBraceToken:
+		return "SyntaxKindCloseBraceToken"
+	case SyntaxKindOpenParenToken:
+		return "SyntaxKindOpenParenToken"
+	case SyntaxKindCloseParenToken:
+		return "SyntaxKindCloseParenToken"
+	case SyntaxKindOpenBracketToken:
+		return "SyntaxKindOpenBracketToken"
+	case SyntaxKindCloseBracketToken:
+		return "SyntaxKindCloseBracketToken"
+	case SyntaxKindDotToken:
+		return "SyntaxKindDotToken"
+	case SyntaxKindDotDotDotToken:
+		return "SyntaxKindDotDotDotToken"
+	case SyntaxKindSemicolonToken:
+		return "SyntaxKindSemicolonToken"
+	case SyntaxKindCommaToken:
+		return "SyntaxKindCommaToken"
+	case SyntaxKindQuestionDotToken:
+		return "SyntaxKindQuestionDotToken"
+	case SyntaxKindLessThanToken:
+		return "SyntaxKindLessThanToken"
+	case SyntaxKindLessThanSlashToken:
+		return "SyntaxKindLessThanSlashToken"
+	case SyntaxKindGreaterThanToken:
+		return "SyntaxKindGreaterThanToken"
+	case SyntaxKindLessThanEqualsToken:
+		return "SyntaxKindLessThanEqualsToken"
+	case SyntaxKindGreaterThanEqualsToken:
+		return "SyntaxKindGreaterThanEqualsToken"
+	case SyntaxKindEqualsEqualsToken:
+		return "SyntaxKindEqualsEqualsToken"
+	case SyntaxKindExclamationEqualsToken:
+		return "SyntaxKindExclamationEqualsToken"
+	case SyntaxKindEqualsEqualsEqualsToken:
+		return "SyntaxKindEqualsEqualsEqualsToken"
+	case SyntaxKindExclamationEqualsEqualsToken:
+		return "SyntaxKindExclamationEqualsEqualsToken"
+	case SyntaxKindEqualsGreaterThanToken:
+		return "SyntaxKindEqualsGreaterThanToken"
+	case SyntaxKindPlusToken:
+		return "SyntaxKindPlusToken"
+	case SyntaxKindMinusToken:
+		return "SyntaxKindMinusToken"
+	case SyntaxKindAsteriskToken:
+		return "SyntaxKindAsteriskToken"
+	case SyntaxKindAsteriskAsteriskToken:
+		return "SyntaxKindAsteriskAsteriskToken"
+	case SyntaxKindSlashToken:
+		return "SyntaxKindSlashToken"
+	case SyntaxKindPercentToken:
+		return "SyntaxKindPercentToken"
+	case SyntaxKindPlusPlusToken:
+		return "SyntaxKindPlusPlusToken"
+	case SyntaxKindMinusMinusToken:
+		return "SyntaxKindMinusMinusToken"
+	case SyntaxKindLessThanLessThanToken:
+		return "SyntaxKindLessThanLessThanToken"
+	case SyntaxKindGreaterThanGreaterThanToken:
+		return "SyntaxKindGreaterThanGreaterThanToken"
+	case SyntaxKindGreaterThanGreaterThanGreaterThanToken:
+		return "SyntaxKindGreaterThanGreaterThanGreaterThanToken"
+	case SyntaxKindAmpersandToken:
+		return "SyntaxKindAmpersandToken"
+	case SyntaxKindBarToken:
+		return "SyntaxKindBarToken"
+	case SyntaxKindCaretToken:
+		return "SyntaxKindCaretToken"
+	case SyntaxKindExclamationToken:
+		return "SyntaxKindExclamationToken"
+	case SyntaxKindTildeToken:
+		return "SyntaxKindTildeToken"
+	case SyntaxKindAmpersandAmpersandToken:
+		return "SyntaxKindAmpersandAmpersandToken"
+	case SyntaxKindBarBarToken:
+		return "SyntaxKindBarBarToken"
+	case SyntaxKindQuestionToken:
+		return "SyntaxKindQuestionToken"
+	case SyntaxKindColonToken:
+		return "SyntaxKindColonToken"
+	case SyntaxKindAtToken:
+		return "SyntaxKindAtToken"
+	case SyntaxKindQuestionQuestionToken:
+		return "SyntaxKindQuestionQuestionToken"
 	/** Only the JSDoc scanner produces BacktickToken. The normal scanner produces NoSubstitutionTemplateLiteral and related kinds. */
-	case SyntaxKindBacktickToken: return "SyntaxKindBacktickToken"
+	case SyntaxKindBacktickToken:
+		return "SyntaxKindBacktickToken"
 	/** Only the JSDoc scanner produces HashToken. The normal scanner produces PrivateIdentifier. */
-	case SyntaxKindHashToken: return "SyntaxKindHashToken"
+	case SyntaxKindHashToken:
+		return "SyntaxKindHashToken"
 	// Assignments
-	case SyntaxKindEqualsToken: return "SyntaxKindEqualsToken"
-	case SyntaxKindPlusEqualsToken: return "SyntaxKindPlusEqualsToken"
-	case SyntaxKindMinusEqualsToken: return "SyntaxKindMinusEqualsToken"
-	case SyntaxKindAsteriskEqualsToken: return "SyntaxKindAsteriskEqualsToken"
-	case SyntaxKindAsteriskAsteriskEqualsToken: return "SyntaxKindAsteriskAsteriskEqualsToken"
-	case SyntaxKindSlashEqualsToken: return "SyntaxKindSlashEqualsToken"
-	case SyntaxKindPercentEqualsToken: return "SyntaxKindPercentEqualsToken"
-	case SyntaxKindLessThanLessThanEqualsToken: return "SyntaxKindLessThanLessThanEqualsToken"
-	case SyntaxKindGreaterThanGreaterThanEqualsToken: return "SyntaxKindGreaterThanGreaterThanEqualsToken"
-	case SyntaxKindGreaterThanGreaterThanGreaterThanEqualsToken: return "SyntaxKindGreaterThanGreaterThanGreaterThanEqualsToken"
-	case SyntaxKindAmpersandEqualsToken: return "SyntaxKindAmpersandEqualsToken"
-	case SyntaxKindBarEqualsToken: return "SyntaxKindBarEqualsToken"
-	case SyntaxKindBarBarEqualsToken: return "SyntaxKindBarBarEqualsToken"
-	case SyntaxKindAmpersandAmpersandEqualsToken: return "SyntaxKindAmpersandAmpersandEqualsToken"
-	case SyntaxKindQuestionQuestionEqualsToken: return "SyntaxKindQuestionQuestionEqualsToken"
-	case SyntaxKindCaretEqualsToken: return "SyntaxKindCaretEqualsToken"
+	case SyntaxKindEqualsToken:
+		return "SyntaxKindEqualsToken"
+	case SyntaxKindPlusEqualsToken:
+		return "SyntaxKindPlusEqualsToken"
+	case SyntaxKindMinusEqualsToken:
+		return "SyntaxKindMinusEqualsToken"
+	case SyntaxKindAsteriskEqualsToken:
+		return "SyntaxKindAsteriskEqualsToken"
+	case SyntaxKindAsteriskAsteriskEqualsToken:
+		return "SyntaxKindAsteriskAsteriskEqualsToken"
+	case SyntaxKindSlashEqualsToken:
+		return "SyntaxKindSlashEqualsToken"
+	case SyntaxKindPercentEqualsToken:
+		return "SyntaxKindPercentEqualsToken"
+	case SyntaxKindLessThanLessThanEqualsToken:
+		return "SyntaxKindLessThanLessThanEqualsToken"
+	case SyntaxKindGreaterThanGreaterThanEqualsToken:
+		return "SyntaxKindGreaterThanGreaterThanEqualsToken"
+	case SyntaxKindGreaterThanGreaterThanGreaterThanEqualsToken:
+		return "SyntaxKindGreaterThanGreaterThanGreaterThanEqualsToken"
+	case SyntaxKindAmpersandEqualsToken:
+		return "SyntaxKindAmpersandEqualsToken"
+	case SyntaxKindBarEqualsToken:
+		return "SyntaxKindBarEqualsToken"
+	case SyntaxKindBarBarEqualsToken:
+		return "SyntaxKindBarBarEqualsToken"
+	case SyntaxKindAmpersandAmpersandEqualsToken:
+		return "SyntaxKindAmpersandAmpersandEqualsToken"
+	case SyntaxKindQuestionQuestionEqualsToken:
+		return "SyntaxKindQuestionQuestionEqualsToken"
+	case SyntaxKindCaretEqualsToken:
+		return "SyntaxKindCaretEqualsToken"
 	// Identifiers and PrivateIdentifier
-	case SyntaxKindIdentifier: return "SyntaxKindIdentifier"
-	case SyntaxKindPrivateIdentifier: return "SyntaxKindPrivateIdentifier"
-	case SyntaxKindJSDocCommentTextToken: return "SyntaxKindJSDocCommentTextToken"
+	case SyntaxKindIdentifier:
+		return "SyntaxKindIdentifier"
+	case SyntaxKindPrivateIdentifier:
+		return "SyntaxKindPrivateIdentifier"
+	case SyntaxKindJSDocCommentTextToken:
+		return "SyntaxKindJSDocCommentTextToken"
 	// Reserved words
-	case SyntaxKindBreakKeyword: return "SyntaxKindBreakKeyword"
-	case SyntaxKindCaseKeyword: return "SyntaxKindCaseKeyword"
-	case SyntaxKindCatchKeyword: return "SyntaxKindCatchKeyword"
-	case SyntaxKindClassKeyword: return "SyntaxKindClassKeyword"
-	case SyntaxKindConstKeyword: return "SyntaxKindConstKeyword"
-	case SyntaxKindContinueKeyword: return "SyntaxKindContinueKeyword"
-	case SyntaxKindDebuggerKeyword: return "SyntaxKindDebuggerKeyword"
-	case SyntaxKindDefaultKeyword: return "SyntaxKindDefaultKeyword"
-	case SyntaxKindDeleteKeyword: return "SyntaxKindDeleteKeyword"
-	case SyntaxKindDoKeyword: return "SyntaxKindDoKeyword"
-	case SyntaxKindElseKeyword: return "SyntaxKindElseKeyword"
-	case SyntaxKindEnumKeyword: return "SyntaxKindEnumKeyword"
-	case SyntaxKindExportKeyword: return "SyntaxKindExportKeyword"
-	case SyntaxKindExtendsKeyword: return "SyntaxKindExtendsKeyword"
-	case SyntaxKindFalseKeyword: return "SyntaxKindFalseKeyword"
-	case SyntaxKindFinallyKeyword: return "SyntaxKindFinallyKeyword"
-	case SyntaxKindForKeyword: return "SyntaxKindForKeyword"
-	case SyntaxKindFunctionKeyword: return "SyntaxKindFunctionKeyword"
-	case SyntaxKindIfKeyword: return "SyntaxKindIfKeyword"
-	case SyntaxKindImportKeyword: return "SyntaxKindImportKeyword"
-	case SyntaxKindInKeyword: return "SyntaxKindInKeyword"
-	case SyntaxKindInstanceOfKeyword: return "SyntaxKindInstanceOfKeyword"
-	case SyntaxKindNewKeyword: return "SyntaxKindNewKeyword"
-	case SyntaxKindNullKeyword: return "SyntaxKindNullKeyword"
-	case SyntaxKindReturnKeyword: return "SyntaxKindReturnKeyword"
-	case SyntaxKindSuperKeyword: return "SyntaxKindSuperKeyword"
-	case SyntaxKindSwitchKeyword: return "SyntaxKindSwitchKeyword"
-	case SyntaxKindThisKeyword: return "SyntaxKindThisKeyword"
-	case SyntaxKindThrowKeyword: return "SyntaxKindThrowKeyword"
-	case SyntaxKindTrueKeyword: return "SyntaxKindTrueKeyword"
-	case SyntaxKindTryKeyword: return "SyntaxKindTryKeyword"
-	case SyntaxKindTypeOfKeyword: return "SyntaxKindTypeOfKeyword"
-	case SyntaxKindVarKeyword: return "SyntaxKindVarKeyword"
-	case SyntaxKindVoidKeyword: return "SyntaxKindVoidKeyword"
-	case SyntaxKindWhileKeyword: return "SyntaxKindWhileKeyword"
-	case SyntaxKindWithKeyword: return "SyntaxKindWithKeyword"
+	case SyntaxKindBreakKeyword:
+		return "SyntaxKindBreakKeyword"
+	case SyntaxKindCaseKeyword:
+		return "SyntaxKindCaseKeyword"
+	case SyntaxKindCatchKeyword:
+		return "SyntaxKindCatchKeyword"
+	case SyntaxKindClassKeyword:
+		return "SyntaxKindClassKeyword"
+	case SyntaxKindConstKeyword:
+		return "SyntaxKindConstKeyword"
+	case SyntaxKindContinueKeyword:
+		return "SyntaxKindContinueKeyword"
+	case SyntaxKindDebuggerKeyword:
+		return "SyntaxKindDebuggerKeyword"
+	case SyntaxKindDefaultKeyword:
+		return "SyntaxKindDefaultKeyword"
+	case SyntaxKindDeleteKeyword:
+		return "SyntaxKindDeleteKeyword"
+	case SyntaxKindDoKeyword:
+		return "SyntaxKindDoKeyword"
+	case SyntaxKindElseKeyword:
+		return "SyntaxKindElseKeyword"
+	case SyntaxKindEnumKeyword:
+		return "SyntaxKindEnumKeyword"
+	case SyntaxKindExportKeyword:
+		return "SyntaxKindExportKeyword"
+	case SyntaxKindExtendsKeyword:
+		return "SyntaxKindExtendsKeyword"
+	case SyntaxKindFalseKeyword:
+		return "SyntaxKindFalseKeyword"
+	case SyntaxKindFinallyKeyword:
+		return "SyntaxKindFinallyKeyword"
+	case SyntaxKindForKeyword:
+		return "SyntaxKindForKeyword"
+	case SyntaxKindFunctionKeyword:
+		return "SyntaxKindFunctionKeyword"
+	case SyntaxKindIfKeyword:
+		return "SyntaxKindIfKeyword"
+	case SyntaxKindImportKeyword:
+		return "SyntaxKindImportKeyword"
+	case SyntaxKindInKeyword:
+		return "SyntaxKindInKeyword"
+	case SyntaxKindInstanceOfKeyword:
+		return "SyntaxKindInstanceOfKeyword"
+	case SyntaxKindNewKeyword:
+		return "SyntaxKindNewKeyword"
+	case SyntaxKindNullKeyword:
+		return "SyntaxKindNullKeyword"
+	case SyntaxKindReturnKeyword:
+		return "SyntaxKindReturnKeyword"
+	case SyntaxKindSuperKeyword:
+		return "SyntaxKindSuperKeyword"
+	case SyntaxKindSwitchKeyword:
+		return "SyntaxKindSwitchKeyword"
+	case SyntaxKindThisKeyword:
+		return "SyntaxKindThisKeyword"
+	case SyntaxKindThrowKeyword:
+		return "SyntaxKindThrowKeyword"
+	case SyntaxKindTrueKeyword:
+		return "SyntaxKindTrueKeyword"
+	case SyntaxKindTryKeyword:
+		return "SyntaxKindTryKeyword"
+	case SyntaxKindTypeOfKeyword:
+		return "SyntaxKindTypeOfKeyword"
+	case SyntaxKindVarKeyword:
+		return "SyntaxKindVarKeyword"
+	case SyntaxKindVoidKeyword:
+		return "SyntaxKindVoidKeyword"
+	case SyntaxKindWhileKeyword:
+		return "SyntaxKindWhileKeyword"
+	case SyntaxKindWithKeyword:
+		return "SyntaxKindWithKeyword"
 	// Strict mode reserved words
-	case SyntaxKindImplementsKeyword: return "SyntaxKindImplementsKeyword"
-	case SyntaxKindInterfaceKeyword: return "SyntaxKindInterfaceKeyword"
-	case SyntaxKindLetKeyword: return "SyntaxKindLetKeyword"
-	case SyntaxKindPackageKeyword: return "SyntaxKindPackageKeyword"
-	case SyntaxKindPrivateKeyword: return "SyntaxKindPrivateKeyword"
-	case SyntaxKindProtectedKeyword: return "SyntaxKindProtectedKeyword"
-	case SyntaxKindPublicKeyword: return "SyntaxKindPublicKeyword"
-	case SyntaxKindStaticKeyword: return "SyntaxKindStaticKeyword"
-	case SyntaxKindYieldKeyword: return "SyntaxKindYieldKeyword"
+	case SyntaxKindImplementsKeyword:
+		return "SyntaxKindImplementsKeyword"
+	case SyntaxKindInterfaceKeyword:
+		return "SyntaxKindInterfaceKeyword"
+	case SyntaxKindLetKeyword:
+		return "SyntaxKindLetKeyword"
+	case SyntaxKindPackageKeyword:
+		return "SyntaxKindPackageKeyword"
+	case SyntaxKindPrivateKeyword:
+		return "SyntaxKindPrivateKeyword"
+	case SyntaxKindProtectedKeyword:
+		return "SyntaxKindProtectedKeyword"
+	case SyntaxKindPublicKeyword:
+		return "SyntaxKindPublicKeyword"
+	case SyntaxKindStaticKeyword:
+		return "SyntaxKindStaticKeyword"
+	case SyntaxKindYieldKeyword:
+		return "SyntaxKindYieldKeyword"
 	// Contextual keywords
-	case SyntaxKindAbstractKeyword: return "SyntaxKindAbstractKeyword"
-	case SyntaxKindAccessorKeyword: return "SyntaxKindAccessorKeyword"
-	case SyntaxKindAsKeyword: return "SyntaxKindAsKeyword"
-	case SyntaxKindAssertsKeyword: return "SyntaxKindAssertsKeyword"
-	case SyntaxKindAssertKeyword: return "SyntaxKindAssertKeyword"
-	case SyntaxKindAnyKeyword: return "SyntaxKindAnyKeyword"
-	case SyntaxKindAsyncKeyword: return "SyntaxKindAsyncKeyword"
-	case SyntaxKindAwaitKeyword: return "SyntaxKindAwaitKeyword"
-	case SyntaxKindBooleanKeyword: return "SyntaxKindBooleanKeyword"
-	case SyntaxKindConstructorKeyword: return "SyntaxKindConstructorKeyword"
-	case SyntaxKindDeclareKeyword: return "SyntaxKindDeclareKeyword"
-	case SyntaxKindGetKeyword: return "SyntaxKindGetKeyword"
-	case SyntaxKindImmediateKeyword: return "SyntaxKindImmediateKeyword"
-	case SyntaxKindInferKeyword: return "SyntaxKindInferKeyword"
-	case SyntaxKindIntrinsicKeyword: return "SyntaxKindIntrinsicKeyword"
-	case SyntaxKindIsKeyword: return "SyntaxKindIsKeyword"
-	case SyntaxKindKeyOfKeyword: return "SyntaxKindKeyOfKeyword"
-	case SyntaxKindModuleKeyword: return "SyntaxKindModuleKeyword"
-	case SyntaxKindNamespaceKeyword: return "SyntaxKindNamespaceKeyword"
-	case SyntaxKindNeverKeyword: return "SyntaxKindNeverKeyword"
-	case SyntaxKindOutKeyword: return "SyntaxKindOutKeyword"
-	case SyntaxKindReadonlyKeyword: return "SyntaxKindReadonlyKeyword"
-	case SyntaxKindRequireKeyword: return "SyntaxKindRequireKeyword"
-	case SyntaxKindNumberKeyword: return "SyntaxKindNumberKeyword"
-	case SyntaxKindObjectKeyword: return "SyntaxKindObjectKeyword"
-	case SyntaxKindSatisfiesKeyword: return "SyntaxKindSatisfiesKeyword"
-	case SyntaxKindSetKeyword: return "SyntaxKindSetKeyword"
-	case SyntaxKindStringKeyword: return "SyntaxKindStringKeyword"
-	case SyntaxKindSymbolKeyword: return "SyntaxKindSymbolKeyword"
-	case SyntaxKindTypeKeyword: return "SyntaxKindTypeKeyword"
-	case SyntaxKindUndefinedKeyword: return "SyntaxKindUndefinedKeyword"
-	case SyntaxKindUniqueKeyword: return "SyntaxKindUniqueKeyword"
-	case SyntaxKindUnknownKeyword: return "SyntaxKindUnknownKeyword"
-	case SyntaxKindUsingKeyword: return "SyntaxKindUsingKeyword"
-	case SyntaxKindFromKeyword: return "SyntaxKindFromKeyword"
-	case SyntaxKindGlobalKeyword: return "SyntaxKindGlobalKeyword"
-	case SyntaxKindBigIntKeyword: return "SyntaxKindBigIntKeyword"
-	case SyntaxKindOverrideKeyword: return "SyntaxKindOverrideKeyword"
-	case SyntaxKindOfKeyword: return "SyntaxKindOfKeyword " // LastKeyword and LastToken and LastContextualKeyword"
+	case SyntaxKindAbstractKeyword:
+		return "SyntaxKindAbstractKeyword"
+	case SyntaxKindAccessorKeyword:
+		return "SyntaxKindAccessorKeyword"
+	case SyntaxKindAsKeyword:
+		return "SyntaxKindAsKeyword"
+	case SyntaxKindAssertsKeyword:
+		return "SyntaxKindAssertsKeyword"
+	case SyntaxKindAssertKeyword:
+		return "SyntaxKindAssertKeyword"
+	case SyntaxKindAnyKeyword:
+		return "SyntaxKindAnyKeyword"
+	case SyntaxKindAsyncKeyword:
+		return "SyntaxKindAsyncKeyword"
+	case SyntaxKindAwaitKeyword:
+		return "SyntaxKindAwaitKeyword"
+	case SyntaxKindBooleanKeyword:
+		return "SyntaxKindBooleanKeyword"
+	case SyntaxKindConstructorKeyword:
+		return "SyntaxKindConstructorKeyword"
+	case SyntaxKindDeclareKeyword:
+		return "SyntaxKindDeclareKeyword"
+	case SyntaxKindGetKeyword:
+		return "SyntaxKindGetKeyword"
+	case SyntaxKindImmediateKeyword:
+		return "SyntaxKindImmediateKeyword"
+	case SyntaxKindInferKeyword:
+		return "SyntaxKindInferKeyword"
+	case SyntaxKindIntrinsicKeyword:
+		return "SyntaxKindIntrinsicKeyword"
+	case SyntaxKindIsKeyword:
+		return "SyntaxKindIsKeyword"
+	case SyntaxKindKeyOfKeyword:
+		return "SyntaxKindKeyOfKeyword"
+	case SyntaxKindModuleKeyword:
+		return "SyntaxKindModuleKeyword"
+	case SyntaxKindNamespaceKeyword:
+		return "SyntaxKindNamespaceKeyword"
+	case SyntaxKindNeverKeyword:
+		return "SyntaxKindNeverKeyword"
+	case SyntaxKindOutKeyword:
+		return "SyntaxKindOutKeyword"
+	case SyntaxKindReadonlyKeyword:
+		return "SyntaxKindReadonlyKeyword"
+	case SyntaxKindRequireKeyword:
+		return "SyntaxKindRequireKeyword"
+	case SyntaxKindNumberKeyword:
+		return "SyntaxKindNumberKeyword"
+	case SyntaxKindObjectKeyword:
+		return "SyntaxKindObjectKeyword"
+	case SyntaxKindSatisfiesKeyword:
+		return "SyntaxKindSatisfiesKeyword"
+	case SyntaxKindSetKeyword:
+		return "SyntaxKindSetKeyword"
+	case SyntaxKindStringKeyword:
+		return "SyntaxKindStringKeyword"
+	case SyntaxKindSymbolKeyword:
+		return "SyntaxKindSymbolKeyword"
+	case SyntaxKindTypeKeyword:
+		return "SyntaxKindTypeKeyword"
+	case SyntaxKindUndefinedKeyword:
+		return "SyntaxKindUndefinedKeyword"
+	case SyntaxKindUniqueKeyword:
+		return "SyntaxKindUniqueKeyword"
+	case SyntaxKindUnknownKeyword:
+		return "SyntaxKindUnknownKeyword"
+	case SyntaxKindUsingKeyword:
+		return "SyntaxKindUsingKeyword"
+	case SyntaxKindFromKeyword:
+		return "SyntaxKindFromKeyword"
+	case SyntaxKindGlobalKeyword:
+		return "SyntaxKindGlobalKeyword"
+	case SyntaxKindBigIntKeyword:
+		return "SyntaxKindBigIntKeyword"
+	case SyntaxKindOverrideKeyword:
+		return "SyntaxKindOverrideKeyword"
+	case SyntaxKindOfKeyword:
+		return "SyntaxKindOfKeyword " // LastKeyword and LastToken and LastContextualKeyword"
 	// Parse tree nodes
 	// Names
-	case SyntaxKindQualifiedName: return "SyntaxKindQualifiedName"
-	case SyntaxKindComputedPropertyName: return "SyntaxKindComputedPropertyName"
+	case SyntaxKindQualifiedName:
+		return "SyntaxKindQualifiedName"
+	case SyntaxKindComputedPropertyName:
+		return "SyntaxKindComputedPropertyName"
 	// Lists
-	case SyntaxKindModifierList: return "SyntaxKindModifierList"
-	case SyntaxKindTypeParameterList: return "SyntaxKindTypeParameterList"
-	case SyntaxKindTypeArgumentList: return "SyntaxKindTypeArgumentList"
+	case SyntaxKindModifierList:
+		return "SyntaxKindModifierList"
+	case SyntaxKindTypeParameterList:
+		return "SyntaxKindTypeParameterList"
+	case SyntaxKindTypeArgumentList:
+		return "SyntaxKindTypeArgumentList"
 	// Signature elements
-	case SyntaxKindTypeParameter: return "SyntaxKindTypeParameter"
-	case SyntaxKindParameter: return "SyntaxKindParameter"
-	case SyntaxKindDecorator: return "SyntaxKindDecorator"
+	case SyntaxKindTypeParameter:
+		return "SyntaxKindTypeParameter"
+	case SyntaxKindParameter:
+		return "SyntaxKindParameter"
+	case SyntaxKindDecorator:
+		return "SyntaxKindDecorator"
 	// TypeMember
-	case SyntaxKindPropertySignature: return "SyntaxKindPropertySignature"
-	case SyntaxKindPropertyDeclaration: return "SyntaxKindPropertyDeclaration"
-	case SyntaxKindMethodSignature: return "SyntaxKindMethodSignature"
-	case SyntaxKindMethodDeclaration: return "SyntaxKindMethodDeclaration"
-	case SyntaxKindClassStaticBlockDeclaration: return "SyntaxKindClassStaticBlockDeclaration"
-	case SyntaxKindConstructor: return "SyntaxKindConstructor"
-	case SyntaxKindGetAccessor: return "SyntaxKindGetAccessor"
-	case SyntaxKindSetAccessor: return "SyntaxKindSetAccessor"
-	case SyntaxKindCallSignature: return "SyntaxKindCallSignature"
-	case SyntaxKindConstructSignature: return "SyntaxKindConstructSignature"
-	case SyntaxKindIndexSignature: return "SyntaxKindIndexSignature"
+	case SyntaxKindPropertySignature:
+		return "SyntaxKindPropertySignature"
+	case SyntaxKindPropertyDeclaration:
+		return "SyntaxKindPropertyDeclaration"
+	case SyntaxKindMethodSignature:
+		return "SyntaxKindMethodSignature"
+	case SyntaxKindMethodDeclaration:
+		return "SyntaxKindMethodDeclaration"
+	case SyntaxKindClassStaticBlockDeclaration:
+		return "SyntaxKindClassStaticBlockDeclaration"
+	case SyntaxKindConstructor:
+		return "SyntaxKindConstructor"
+	case SyntaxKindGetAccessor:
+		return "SyntaxKindGetAccessor"
+	case SyntaxKindSetAccessor:
+		return "SyntaxKindSetAccessor"
+	case SyntaxKindCallSignature:
+		return "SyntaxKindCallSignature"
+	case SyntaxKindConstructSignature:
+		return "SyntaxKindConstructSignature"
+	case SyntaxKindIndexSignature:
+		return "SyntaxKindIndexSignature"
 	// Type
-	case SyntaxKindTypePredicate: return "SyntaxKindTypePredicate"
-	case SyntaxKindTypeReference: return "SyntaxKindTypeReference"
-	case SyntaxKindFunctionType: return "SyntaxKindFunctionType"
-	case SyntaxKindConstructorType: return "SyntaxKindConstructorType"
-	case SyntaxKindTypeQuery: return "SyntaxKindTypeQuery"
-	case SyntaxKindTypeLiteral: return "SyntaxKindTypeLiteral"
-	case SyntaxKindArrayType: return "SyntaxKindArrayType"
-	case SyntaxKindTupleType: return "SyntaxKindTupleType"
-	case SyntaxKindOptionalType: return "SyntaxKindOptionalType"
-	case SyntaxKindRestType: return "SyntaxKindRestType"
-	case SyntaxKindUnionType: return "SyntaxKindUnionType"
-	case SyntaxKindIntersectionType: return "SyntaxKindIntersectionType"
-	case SyntaxKindConditionalType: return "SyntaxKindConditionalType"
-	case SyntaxKindInferType: return "SyntaxKindInferType"
-	case SyntaxKindParenthesizedType: return "SyntaxKindParenthesizedType"
-	case SyntaxKindThisType: return "SyntaxKindThisType"
-	case SyntaxKindTypeOperator: return "SyntaxKindTypeOperator"
-	case SyntaxKindIndexedAccessType: return "SyntaxKindIndexedAccessType"
-	case SyntaxKindMappedType: return "SyntaxKindMappedType"
-	case SyntaxKindLiteralType: return "SyntaxKindLiteralType"
-	case SyntaxKindNamedTupleMember: return "SyntaxKindNamedTupleMember"
-	case SyntaxKindTemplateLiteralType: return "SyntaxKindTemplateLiteralType"
-	case SyntaxKindTemplateLiteralTypeSpan: return "SyntaxKindTemplateLiteralTypeSpan"
-	case SyntaxKindImportType: return "SyntaxKindImportType"
+	case SyntaxKindTypePredicate:
+		return "SyntaxKindTypePredicate"
+	case SyntaxKindTypeReference:
+		return "SyntaxKindTypeReference"
+	case SyntaxKindFunctionType:
+		return "SyntaxKindFunctionType"
+	case SyntaxKindConstructorType:
+		return "SyntaxKindConstructorType"
+	case SyntaxKindTypeQuery:
+		return "SyntaxKindTypeQuery"
+	case SyntaxKindTypeLiteral:
+		return "SyntaxKindTypeLiteral"
+	case SyntaxKindArrayType:
+		return "SyntaxKindArrayType"
+	case SyntaxKindTupleType:
+		return "SyntaxKindTupleType"
+	case SyntaxKindOptionalType:
+		return "SyntaxKindOptionalType"
+	case SyntaxKindRestType:
+		return "SyntaxKindRestType"
+	case SyntaxKindUnionType:
+		return "SyntaxKindUnionType"
+	case SyntaxKindIntersectionType:
+		return "SyntaxKindIntersectionType"
+	case SyntaxKindConditionalType:
+		return "SyntaxKindConditionalType"
+	case SyntaxKindInferType:
+		return "SyntaxKindInferType"
+	case SyntaxKindParenthesizedType:
+		return "SyntaxKindParenthesizedType"
+	case SyntaxKindThisType:
+		return "SyntaxKindThisType"
+	case SyntaxKindTypeOperator:
+		return "SyntaxKindTypeOperator"
+	case SyntaxKindIndexedAccessType:
+		return "SyntaxKindIndexedAccessType"
+	case SyntaxKindMappedType:
+		return "SyntaxKindMappedType"
+	case SyntaxKindLiteralType:
+		return "SyntaxKindLiteralType"
+	case SyntaxKindNamedTupleMember:
+		return "SyntaxKindNamedTupleMember"
+	case SyntaxKindTemplateLiteralType:
+		return "SyntaxKindTemplateLiteralType"
+	case SyntaxKindTemplateLiteralTypeSpan:
+		return "SyntaxKindTemplateLiteralTypeSpan"
+	case SyntaxKindImportType:
+		return "SyntaxKindImportType"
 	// Binding patterns:
-	case SyntaxKindObjectBindingPattern: return "SyntaxKindObjectBindingPattern"
-	case SyntaxKindArrayBindingPattern: return "SyntaxKindArrayBindingPattern"
-	case SyntaxKindBindingElement: return "SyntaxKindBindingElement"
+	case SyntaxKindObjectBindingPattern:
+		return "SyntaxKindObjectBindingPattern"
+	case SyntaxKindArrayBindingPattern:
+		return "SyntaxKindArrayBindingPattern"
+	case SyntaxKindBindingElement:
+		return "SyntaxKindBindingElement"
 	// Expression
-	case SyntaxKindArrayLiteralExpression: return "SyntaxKindArrayLiteralExpression"
-	case SyntaxKindObjectLiteralExpression: return "SyntaxKindObjectLiteralExpression"
-	case SyntaxKindPropertyAccessExpression: return "SyntaxKindPropertyAccessExpression"
-	case SyntaxKindElementAccessExpression: return "SyntaxKindElementAccessExpression"
-	case SyntaxKindCallExpression: return "SyntaxKindCallExpression"
-	case SyntaxKindNewExpression: return "SyntaxKindNewExpression"
-	case SyntaxKindTaggedTemplateExpression: return "SyntaxKindTaggedTemplateExpression"
-	case SyntaxKindTypeAssertionExpression: return "SyntaxKindTypeAssertionExpression"
-	case SyntaxKindParenthesizedExpression: return "SyntaxKindParenthesizedExpression"
-	case SyntaxKindFunctionExpression: return "SyntaxKindFunctionExpression"
-	case SyntaxKindArrowFunction: return "SyntaxKindArrowFunction"
-	case SyntaxKindDeleteExpression: return "SyntaxKindDeleteExpression"
-	case SyntaxKindTypeOfExpression: return "SyntaxKindTypeOfExpression"
-	case SyntaxKindVoidExpression: return "SyntaxKindVoidExpression"
-	case SyntaxKindAwaitExpression: return "SyntaxKindAwaitExpression"
-	case SyntaxKindPrefixUnaryExpression: return "SyntaxKindPrefixUnaryExpression"
-	case SyntaxKindPostfixUnaryExpression: return "SyntaxKindPostfixUnaryExpression"
-	case SyntaxKindBinaryExpression: return "SyntaxKindBinaryExpression"
-	case SyntaxKindConditionalExpression: return "SyntaxKindConditionalExpression"
-	case SyntaxKindTemplateExpression: return "SyntaxKindTemplateExpression"
-	case SyntaxKindYieldExpression: return "SyntaxKindYieldExpression"
-	case SyntaxKindSpreadElement: return "SyntaxKindSpreadElement"
-	case SyntaxKindClassExpression: return "SyntaxKindClassExpression"
-	case SyntaxKindOmittedExpression: return "SyntaxKindOmittedExpression"
-	case SyntaxKindExpressionWithTypeArguments: return "SyntaxKindExpressionWithTypeArguments"
-	case SyntaxKindAsExpression: return "SyntaxKindAsExpression"
-	case SyntaxKindNonNullExpression: return "SyntaxKindNonNullExpression"
-	case SyntaxKindMetaProperty: return "SyntaxKindMetaProperty"
-	case SyntaxKindSyntheticExpression: return "SyntaxKindSyntheticExpression"
-	case SyntaxKindSatisfiesExpression: return "SyntaxKindSatisfiesExpression"
+	case SyntaxKindArrayLiteralExpression:
+		return "SyntaxKindArrayLiteralExpression"
+	case SyntaxKindObjectLiteralExpression:
+		return "SyntaxKindObjectLiteralExpression"
+	case SyntaxKindPropertyAccessExpression:
+		return "SyntaxKindPropertyAccessExpression"
+	case SyntaxKindElementAccessExpression:
+		return "SyntaxKindElementAccessExpression"
+	case SyntaxKindCallExpression:
+		return "SyntaxKindCallExpression"
+	case SyntaxKindNewExpression:
+		return "SyntaxKindNewExpression"
+	case SyntaxKindTaggedTemplateExpression:
+		return "SyntaxKindTaggedTemplateExpression"
+	case SyntaxKindTypeAssertionExpression:
+		return "SyntaxKindTypeAssertionExpression"
+	case SyntaxKindParenthesizedExpression:
+		return "SyntaxKindParenthesizedExpression"
+	case SyntaxKindFunctionExpression:
+		return "SyntaxKindFunctionExpression"
+	case SyntaxKindArrowFunction:
+		return "SyntaxKindArrowFunction"
+	case SyntaxKindDeleteExpression:
+		return "SyntaxKindDeleteExpression"
+	case SyntaxKindTypeOfExpression:
+		return "SyntaxKindTypeOfExpression"
+	case SyntaxKindVoidExpression:
+		return "SyntaxKindVoidExpression"
+	case SyntaxKindAwaitExpression:
+		return "SyntaxKindAwaitExpression"
+	case SyntaxKindPrefixUnaryExpression:
+		return "SyntaxKindPrefixUnaryExpression"
+	case SyntaxKindPostfixUnaryExpression:
+		return "SyntaxKindPostfixUnaryExpression"
+	case SyntaxKindBinaryExpression:
+		return "SyntaxKindBinaryExpression"
+	case SyntaxKindConditionalExpression:
+		return "SyntaxKindConditionalExpression"
+	case SyntaxKindTemplateExpression:
+		return "SyntaxKindTemplateExpression"
+	case SyntaxKindYieldExpression:
+		return "SyntaxKindYieldExpression"
+	case SyntaxKindSpreadElement:
+		return "SyntaxKindSpreadElement"
+	case SyntaxKindClassExpression:
+		return "SyntaxKindClassExpression"
+	case SyntaxKindOmittedExpression:
+		return "SyntaxKindOmittedExpression"
+	case SyntaxKindExpressionWithTypeArguments:
+		return "SyntaxKindExpressionWithTypeArguments"
+	case SyntaxKindAsExpression:
+		return "SyntaxKindAsExpression"
+	case SyntaxKindNonNullExpression:
+		return "SyntaxKindNonNullExpression"
+	case SyntaxKindMetaProperty:
+		return "SyntaxKindMetaProperty"
+	case SyntaxKindSyntheticExpression:
+		return "SyntaxKindSyntheticExpression"
+	case SyntaxKindSatisfiesExpression:
+		return "SyntaxKindSatisfiesExpression"
 	// Misc:
-	case SyntaxKindTemplateSpan: return "SyntaxKindTemplateSpan"
-	case SyntaxKindSemicolonClassElement: return "SyntaxKindSemicolonClassElement"
+	case SyntaxKindTemplateSpan:
+		return "SyntaxKindTemplateSpan"
+	case SyntaxKindSemicolonClassElement:
+		return "SyntaxKindSemicolonClassElement"
 	// Element: return "// "
-	case SyntaxKindBlock: return "SyntaxKindBlock"
-	case SyntaxKindEmptyStatement: return "SyntaxKindEmptyStatement"
-	case SyntaxKindVariableStatement: return "SyntaxKindVariableStatement"
-	case SyntaxKindExpressionStatement: return "SyntaxKindExpressionStatement"
-	case SyntaxKindIfStatement: return "SyntaxKindIfStatement"
-	case SyntaxKindDoStatement: return "SyntaxKindDoStatement"
-	case SyntaxKindWhileStatement: return "SyntaxKindWhileStatement"
-	case SyntaxKindForStatement: return "SyntaxKindForStatement"
-	case SyntaxKindForInStatement: return "SyntaxKindForInStatement"
-	case SyntaxKindForOfStatement: return "SyntaxKindForOfStatement"
-	case SyntaxKindContinueStatement: return "SyntaxKindContinueStatement"
-	case SyntaxKindBreakStatement: return "SyntaxKindBreakStatement"
-	case SyntaxKindReturnStatement: return "SyntaxKindReturnStatement"
-	case SyntaxKindWithStatement: return "SyntaxKindWithStatement"
-	case SyntaxKindSwitchStatement: return "SyntaxKindSwitchStatement"
-	case SyntaxKindLabeledStatement: return "SyntaxKindLabeledStatement"
-	case SyntaxKindThrowStatement: return "SyntaxKindThrowStatement"
-	case SyntaxKindTryStatement: return "SyntaxKindTryStatement"
-	case SyntaxKindDebuggerStatement: return "SyntaxKindDebuggerStatement"
-	case SyntaxKindVariableDeclaration: return "SyntaxKindVariableDeclaration"
-	case SyntaxKindVariableDeclarationList: return "SyntaxKindVariableDeclarationList"
-	case SyntaxKindFunctionDeclaration: return "SyntaxKindFunctionDeclaration"
-	case SyntaxKindClassDeclaration: return "SyntaxKindClassDeclaration"
-	case SyntaxKindInterfaceDeclaration: return "SyntaxKindInterfaceDeclaration"
-	case SyntaxKindTypeAliasDeclaration: return "SyntaxKindTypeAliasDeclaration"
-	case SyntaxKindEnumDeclaration: return "SyntaxKindEnumDeclaration"
-	case SyntaxKindModuleDeclaration: return "SyntaxKindModuleDeclaration"
-	case SyntaxKindModuleBlock: return "SyntaxKindModuleBlock"
-	case SyntaxKindCaseBlock: return "SyntaxKindCaseBlock"
-	case SyntaxKindNamespaceExportDeclaration: return "SyntaxKindNamespaceExportDeclaration"
-	case SyntaxKindImportEqualsDeclaration: return "SyntaxKindImportEqualsDeclaration"
-	case SyntaxKindImportDeclaration: return "SyntaxKindImportDeclaration"
-	case SyntaxKindImportClause: return "SyntaxKindImportClause"
-	case SyntaxKindNamespaceImport: return "SyntaxKindNamespaceImport"
-	case SyntaxKindNamedImports: return "SyntaxKindNamedImports"
-	case SyntaxKindImportSpecifier: return "SyntaxKindImportSpecifier"
-	case SyntaxKindExportAssignment: return "SyntaxKindExportAssignment"
-	case SyntaxKindExportDeclaration: return "SyntaxKindExportDeclaration"
-	case SyntaxKindNamedExports: return "SyntaxKindNamedExports"
-	case SyntaxKindNamespaceExport: return "SyntaxKindNamespaceExport"
-	case SyntaxKindExportSpecifier: return "SyntaxKindExportSpecifier"
-	case SyntaxKindMissingDeclaration: return "SyntaxKindMissingDeclaration"
+	case SyntaxKindBlock:
+		return "SyntaxKindBlock"
+	case SyntaxKindEmptyStatement:
+		return "SyntaxKindEmptyStatement"
+	case SyntaxKindVariableStatement:
+		return "SyntaxKindVariableStatement"
+	case SyntaxKindExpressionStatement:
+		return "SyntaxKindExpressionStatement"
+	case SyntaxKindIfStatement:
+		return "SyntaxKindIfStatement"
+	case SyntaxKindDoStatement:
+		return "SyntaxKindDoStatement"
+	case SyntaxKindWhileStatement:
+		return "SyntaxKindWhileStatement"
+	case SyntaxKindForStatement:
+		return "SyntaxKindForStatement"
+	case SyntaxKindForInStatement:
+		return "SyntaxKindForInStatement"
+	case SyntaxKindForOfStatement:
+		return "SyntaxKindForOfStatement"
+	case SyntaxKindContinueStatement:
+		return "SyntaxKindContinueStatement"
+	case SyntaxKindBreakStatement:
+		return "SyntaxKindBreakStatement"
+	case SyntaxKindReturnStatement:
+		return "SyntaxKindReturnStatement"
+	case SyntaxKindWithStatement:
+		return "SyntaxKindWithStatement"
+	case SyntaxKindSwitchStatement:
+		return "SyntaxKindSwitchStatement"
+	case SyntaxKindLabeledStatement:
+		return "SyntaxKindLabeledStatement"
+	case SyntaxKindThrowStatement:
+		return "SyntaxKindThrowStatement"
+	case SyntaxKindTryStatement:
+		return "SyntaxKindTryStatement"
+	case SyntaxKindDebuggerStatement:
+		return "SyntaxKindDebuggerStatement"
+	case SyntaxKindVariableDeclaration:
+		return "SyntaxKindVariableDeclaration"
+	case SyntaxKindVariableDeclarationList:
+		return "SyntaxKindVariableDeclarationList"
+	case SyntaxKindFunctionDeclaration:
+		return "SyntaxKindFunctionDeclaration"
+	case SyntaxKindClassDeclaration:
+		return "SyntaxKindClassDeclaration"
+	case SyntaxKindInterfaceDeclaration:
+		return "SyntaxKindInterfaceDeclaration"
+	case SyntaxKindTypeAliasDeclaration:
+		return "SyntaxKindTypeAliasDeclaration"
+	case SyntaxKindEnumDeclaration:
+		return "SyntaxKindEnumDeclaration"
+	case SyntaxKindModuleDeclaration:
+		return "SyntaxKindModuleDeclaration"
+	case SyntaxKindModuleBlock:
+		return "SyntaxKindModuleBlock"
+	case SyntaxKindCaseBlock:
+		return "SyntaxKindCaseBlock"
+	case SyntaxKindNamespaceExportDeclaration:
+		return "SyntaxKindNamespaceExportDeclaration"
+	case SyntaxKindImportEqualsDeclaration:
+		return "SyntaxKindImportEqualsDeclaration"
+	case SyntaxKindImportDeclaration:
+		return "SyntaxKindImportDeclaration"
+	case SyntaxKindImportClause:
+		return "SyntaxKindImportClause"
+	case SyntaxKindNamespaceImport:
+		return "SyntaxKindNamespaceImport"
+	case SyntaxKindNamedImports:
+		return "SyntaxKindNamedImports"
+	case SyntaxKindImportSpecifier:
+		return "SyntaxKindImportSpecifier"
+	case SyntaxKindExportAssignment:
+		return "SyntaxKindExportAssignment"
+	case SyntaxKindExportDeclaration:
+		return "SyntaxKindExportDeclaration"
+	case SyntaxKindNamedExports:
+		return "SyntaxKindNamedExports"
+	case SyntaxKindNamespaceExport:
+		return "SyntaxKindNamespaceExport"
+	case SyntaxKindExportSpecifier:
+		return "SyntaxKindExportSpecifier"
+	case SyntaxKindMissingDeclaration:
+		return "SyntaxKindMissingDeclaration"
 	// Module references
-	case SyntaxKindExternalModuleReference: return "SyntaxKindExternalModuleReference"
+	case SyntaxKindExternalModuleReference:
+		return "SyntaxKindExternalModuleReference"
 	// JSX
-	case SyntaxKindJsxElement: return "SyntaxKindJsxElement"
-	case SyntaxKindJsxSelfClosingElement: return "SyntaxKindJsxSelfClosingElement"
-	case SyntaxKindJsxOpeningElement: return "SyntaxKindJsxOpeningElement"
-	case SyntaxKindJsxClosingElement: return "SyntaxKindJsxClosingElement"
-	case SyntaxKindJsxFragment: return "SyntaxKindJsxFragment"
-	case SyntaxKindJsxOpeningFragment: return "SyntaxKindJsxOpeningFragment"
-	case SyntaxKindJsxClosingFragment: return "SyntaxKindJsxClosingFragment"
-	case SyntaxKindJsxAttribute: return "SyntaxKindJsxAttribute"
-	case SyntaxKindJsxAttributes: return "SyntaxKindJsxAttributes"
-	case SyntaxKindJsxSpreadAttribute: return "SyntaxKindJsxSpreadAttribute"
-	case SyntaxKindJsxExpression: return "SyntaxKindJsxExpression"
-	case SyntaxKindJsxNamespacedName: return "SyntaxKindJsxNamespacedName"
+	case SyntaxKindJsxElement:
+		return "SyntaxKindJsxElement"
+	case SyntaxKindJsxSelfClosingElement:
+		return "SyntaxKindJsxSelfClosingElement"
+	case SyntaxKindJsxOpeningElement:
+		return "SyntaxKindJsxOpeningElement"
+	case SyntaxKindJsxClosingElement:
+		return "SyntaxKindJsxClosingElement"
+	case SyntaxKindJsxFragment:
+		return "SyntaxKindJsxFragment"
+	case SyntaxKindJsxOpeningFragment:
+		return "SyntaxKindJsxOpeningFragment"
+	case SyntaxKindJsxClosingFragment:
+		return "SyntaxKindJsxClosingFragment"
+	case SyntaxKindJsxAttribute:
+		return "SyntaxKindJsxAttribute"
+	case SyntaxKindJsxAttributes:
+		return "SyntaxKindJsxAttributes"
+	case SyntaxKindJsxSpreadAttribute:
+		return "SyntaxKindJsxSpreadAttribute"
+	case SyntaxKindJsxExpression:
+		return "SyntaxKindJsxExpression"
+	case SyntaxKindJsxNamespacedName:
+		return "SyntaxKindJsxNamespacedName"
 	// Clauses
-	case SyntaxKindCaseClause: return "SyntaxKindCaseClause"
-	case SyntaxKindDefaultClause: return "SyntaxKindDefaultClause"
-	case SyntaxKindHeritageClause: return "SyntaxKindHeritageClause"
-	case SyntaxKindCatchClause: return "SyntaxKindCatchClause"
+	case SyntaxKindCaseClause:
+		return "SyntaxKindCaseClause"
+	case SyntaxKindDefaultClause:
+		return "SyntaxKindDefaultClause"
+	case SyntaxKindHeritageClause:
+		return "SyntaxKindHeritageClause"
+	case SyntaxKindCatchClause:
+		return "SyntaxKindCatchClause"
 	// Import attributes
-	case SyntaxKindImportAttributes: return "SyntaxKindImportAttributes"
-	case SyntaxKindImportAttribute: return "SyntaxKindImportAttribute"
+	case SyntaxKindImportAttributes:
+		return "SyntaxKindImportAttributes"
+	case SyntaxKindImportAttribute:
+		return "SyntaxKindImportAttribute"
 	// Property assignments
-	case SyntaxKindPropertyAssignment: return "SyntaxKindPropertyAssignment"
-	case SyntaxKindShorthandPropertyAssignment: return "SyntaxKindShorthandPropertyAssignment"
-	case SyntaxKindSpreadAssignment: return "SyntaxKindSpreadAssignment"
+	case SyntaxKindPropertyAssignment:
+		return "SyntaxKindPropertyAssignment"
+	case SyntaxKindShorthandPropertyAssignment:
+		return "SyntaxKindShorthandPropertyAssignment"
+	case SyntaxKindSpreadAssignment:
+		return "SyntaxKindSpreadAssignment"
 	// Enum
-	case SyntaxKindEnumMember: return "SyntaxKindEnumMember"
+	case SyntaxKindEnumMember:
+		return "SyntaxKindEnumMember"
 	// Top-level nodes
-	case SyntaxKindSourceFile: return "SyntaxKindSourceFile"
-	case SyntaxKindBundle: return "SyntaxKindBundle"
+	case SyntaxKindSourceFile:
+		return "SyntaxKindSourceFile"
+	case SyntaxKindBundle:
+		return "SyntaxKindBundle"
 	// JSDoc nodes
-	case SyntaxKindJSDocTypeExpression: return "SyntaxKindJSDocTypeExpression"
-	case SyntaxKindJSDocNameReference: return "SyntaxKindJSDocNameReference"
-	case SyntaxKindJSDocMemberName: return "SyntaxKindJSDocMemberName"  // C#p
-	case SyntaxKindJSDocAllType: return "SyntaxKindJSDocAllType"     // The * type
-	case SyntaxKindJSDocUnknownType: return "SyntaxKindJSDocUnknownType" // The ? type
-	case SyntaxKindJSDocNullableType: return "SyntaxKindJSDocNullableType"
-	case SyntaxKindJSDocNonNullableType: return "SyntaxKindJSDocNonNullableType"
-	case SyntaxKindJSDocOptionalType: return "SyntaxKindJSDocOptionalType"
-	case SyntaxKindJSDocFunctionType: return "SyntaxKindJSDocFunctionType"
-	case SyntaxKindJSDocVariadicType: return "SyntaxKindJSDocVariadicType"
-	case SyntaxKindJSDocNamepathType: return "SyntaxKindJSDocNamepathType" // https://jsdoc.app/about-namepaths.html
-	case SyntaxKindJSDoc: return "SyntaxKindJSDoc"
-	case SyntaxKindJSDocText: return "SyntaxKindJSDocText"
-	case SyntaxKindJSDocTypeLiteral: return "SyntaxKindJSDocTypeLiteral"
-	case SyntaxKindJSDocSignature: return "SyntaxKindJSDocSignature"
-	case SyntaxKindJSDocLink: return "SyntaxKindJSDocLink"
-	case SyntaxKindJSDocLinkCode: return "SyntaxKindJSDocLinkCode"
-	case SyntaxKindJSDocLinkPlain: return "SyntaxKindJSDocLinkPlain"
-	case SyntaxKindJSDocTag: return "SyntaxKindJSDocTag"
-	case SyntaxKindJSDocAugmentsTag: return "SyntaxKindJSDocAugmentsTag"
-	case SyntaxKindJSDocImplementsTag: return "SyntaxKindJSDocImplementsTag"
-	case SyntaxKindJSDocAuthorTag: return "SyntaxKindJSDocAuthorTag"
-	case SyntaxKindJSDocDeprecatedTag: return "SyntaxKindJSDocDeprecatedTag"
-	case SyntaxKindJSDocImmediateTag: return "SyntaxKindJSDocImmediateTag"
-	case SyntaxKindJSDocClassTag: return "SyntaxKindJSDocClassTag"
-	case SyntaxKindJSDocPublicTag: return "SyntaxKindJSDocPublicTag"
-	case SyntaxKindJSDocPrivateTag: return "SyntaxKindJSDocPrivateTag"
-	case SyntaxKindJSDocProtectedTag: return "SyntaxKindJSDocProtectedTag"
-	case SyntaxKindJSDocReadonlyTag: return "SyntaxKindJSDocReadonlyTag"
-	case SyntaxKindJSDocOverrideTag: return "SyntaxKindJSDocOverrideTag"
-	case SyntaxKindJSDocCallbackTag: return "SyntaxKindJSDocCallbackTag"
-	case SyntaxKindJSDocOverloadTag: return "SyntaxKindJSDocOverloadTag"
-	case SyntaxKindJSDocEnumTag: return "SyntaxKindJSDocEnumTag"
-	case SyntaxKindJSDocParameterTag: return "SyntaxKindJSDocParameterTag"
-	case SyntaxKindJSDocReturnTag: return "SyntaxKindJSDocReturnTag"
-	case SyntaxKindJSDocThisTag: return "SyntaxKindJSDocThisTag"
-	case SyntaxKindJSDocTypeTag: return "SyntaxKindJSDocTypeTag"
-	case SyntaxKindJSDocTemplateTag: return "SyntaxKindJSDocTemplateTag"
-	case SyntaxKindJSDocTypedefTag: return "SyntaxKindJSDocTypedefTag"
-	case SyntaxKindJSDocSeeTag: return "SyntaxKindJSDocSeeTag"
-	case SyntaxKindJSDocPropertyTag: return "SyntaxKindJSDocPropertyTag"
-	case SyntaxKindJSDocThrowsTag: return "SyntaxKindJSDocThrowsTag"
-	case SyntaxKindJSDocSatisfiesTag: return "SyntaxKindJSDocSatisfiesTag"
-	case SyntaxKindJSDocImportTag: return "SyntaxKindJSDocImportTag"
+	case SyntaxKindJSDocTypeExpression:
+		return "SyntaxKindJSDocTypeExpression"
+	case SyntaxKindJSDocNameReference:
+		return "SyntaxKindJSDocNameReference"
+	case SyntaxKindJSDocMemberName:
+		return "SyntaxKindJSDocMemberName" // C#p
+	case SyntaxKindJSDocAllType:
+		return "SyntaxKindJSDocAllType" // The * type
+	case SyntaxKindJSDocUnknownType:
+		return "SyntaxKindJSDocUnknownType" // The ? type
+	case SyntaxKindJSDocNullableType:
+		return "SyntaxKindJSDocNullableType"
+	case SyntaxKindJSDocNonNullableType:
+		return "SyntaxKindJSDocNonNullableType"
+	case SyntaxKindJSDocOptionalType:
+		return "SyntaxKindJSDocOptionalType"
+	case SyntaxKindJSDocFunctionType:
+		return "SyntaxKindJSDocFunctionType"
+	case SyntaxKindJSDocVariadicType:
+		return "SyntaxKindJSDocVariadicType"
+	case SyntaxKindJSDocNamepathType:
+		return "SyntaxKindJSDocNamepathType" // https://jsdoc.app/about-namepaths.html
+	case SyntaxKindJSDoc:
+		return "SyntaxKindJSDoc"
+	case SyntaxKindJSDocText:
+		return "SyntaxKindJSDocText"
+	case SyntaxKindJSDocTypeLiteral:
+		return "SyntaxKindJSDocTypeLiteral"
+	case SyntaxKindJSDocSignature:
+		return "SyntaxKindJSDocSignature"
+	case SyntaxKindJSDocLink:
+		return "SyntaxKindJSDocLink"
+	case SyntaxKindJSDocLinkCode:
+		return "SyntaxKindJSDocLinkCode"
+	case SyntaxKindJSDocLinkPlain:
+		return "SyntaxKindJSDocLinkPlain"
+	case SyntaxKindJSDocTag:
+		return "SyntaxKindJSDocTag"
+	case SyntaxKindJSDocAugmentsTag:
+		return "SyntaxKindJSDocAugmentsTag"
+	case SyntaxKindJSDocImplementsTag:
+		return "SyntaxKindJSDocImplementsTag"
+	case SyntaxKindJSDocAuthorTag:
+		return "SyntaxKindJSDocAuthorTag"
+	case SyntaxKindJSDocDeprecatedTag:
+		return "SyntaxKindJSDocDeprecatedTag"
+	case SyntaxKindJSDocImmediateTag:
+		return "SyntaxKindJSDocImmediateTag"
+	case SyntaxKindJSDocClassTag:
+		return "SyntaxKindJSDocClassTag"
+	case SyntaxKindJSDocPublicTag:
+		return "SyntaxKindJSDocPublicTag"
+	case SyntaxKindJSDocPrivateTag:
+		return "SyntaxKindJSDocPrivateTag"
+	case SyntaxKindJSDocProtectedTag:
+		return "SyntaxKindJSDocProtectedTag"
+	case SyntaxKindJSDocReadonlyTag:
+		return "SyntaxKindJSDocReadonlyTag"
+	case SyntaxKindJSDocOverrideTag:
+		return "SyntaxKindJSDocOverrideTag"
+	case SyntaxKindJSDocCallbackTag:
+		return "SyntaxKindJSDocCallbackTag"
+	case SyntaxKindJSDocOverloadTag:
+		return "SyntaxKindJSDocOverloadTag"
+	case SyntaxKindJSDocEnumTag:
+		return "SyntaxKindJSDocEnumTag"
+	case SyntaxKindJSDocParameterTag:
+		return "SyntaxKindJSDocParameterTag"
+	case SyntaxKindJSDocReturnTag:
+		return "SyntaxKindJSDocReturnTag"
+	case SyntaxKindJSDocThisTag:
+		return "SyntaxKindJSDocThisTag"
+	case SyntaxKindJSDocTypeTag:
+		return "SyntaxKindJSDocTypeTag"
+	case SyntaxKindJSDocTemplateTag:
+		return "SyntaxKindJSDocTemplateTag"
+	case SyntaxKindJSDocTypedefTag:
+		return "SyntaxKindJSDocTypedefTag"
+	case SyntaxKindJSDocSeeTag:
+		return "SyntaxKindJSDocSeeTag"
+	case SyntaxKindJSDocPropertyTag:
+		return "SyntaxKindJSDocPropertyTag"
+	case SyntaxKindJSDocThrowsTag:
+		return "SyntaxKindJSDocThrowsTag"
+	case SyntaxKindJSDocSatisfiesTag:
+		return "SyntaxKindJSDocSatisfiesTag"
+	case SyntaxKindJSDocImportTag:
+		return "SyntaxKindJSDocImportTag"
 	// Synthesized list
-	case SyntaxKindSyntaxList: return "SyntaxKindSyntaxList"
+	case SyntaxKindSyntaxList:
+		return "SyntaxKindSyntaxList"
 	// Transformation nodes
-	case SyntaxKindNotEmittedStatement: return "SyntaxKindNotEmittedStatement"
-	case SyntaxKindPartiallyEmittedExpression: return "SyntaxKindPartiallyEmittedExpression"
-	case SyntaxKindCommaListExpression: return "SyntaxKindCommaListExpression"
-	case SyntaxKindSyntheticReferenceExpression: return "SyntaxKindSyntheticReferenceExpression"
+	case SyntaxKindNotEmittedStatement:
+		return "SyntaxKindNotEmittedStatement"
+	case SyntaxKindPartiallyEmittedExpression:
+		return "SyntaxKindPartiallyEmittedExpression"
+	case SyntaxKindCommaListExpression:
+		return "SyntaxKindCommaListExpression"
+	case SyntaxKindSyntheticReferenceExpression:
+		return "SyntaxKindSyntheticReferenceExpression"
 	// Enum value count
-	case SyntaxKindCount: return "SyntaxKindCount"
+	case SyntaxKindCount:
+		return "SyntaxKindCount"
 	}
- 	return "no string representation for kind"
+	return "no string representation for kind"
 }
+
 type NodeFlags uint32
 
 const (
