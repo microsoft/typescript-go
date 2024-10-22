@@ -47,13 +47,10 @@ linters:
     # - goheader
 
     # Check
-    # - dupl
     # - exhaustive
     # - goconst
     # - gocritic
     # - gosec
-    # - ireturn
-    # - mnd
     # - predeclared
     # - revive
     # - staticcheck
@@ -61,7 +58,6 @@ linters:
     # - testifylint
     # - unparam
     # - unused
-    # - wastedassign
 
 # linters-settings:
 #   revive:
