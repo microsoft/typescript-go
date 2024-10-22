@@ -1008,6 +1008,19 @@ const (
 	ModuleResolutionKindBundler  ModuleResolutionKind = 100
 )
 
+func (m ModuleResolutionKind) String() string {
+	switch m {
+	case ModuleResolutionKindNode16:
+		return "Node16"
+	case ModuleResolutionKindNodeNext:
+		return "NodeNext"
+	case ModuleResolutionKindBundler:
+		return "Bundler"
+	default:
+		panic("Unhandled case in formatModuleResolutionKind")
+	}
+}
+
 type NodeCheckFlags uint32
 
 const (

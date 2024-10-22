@@ -1994,19 +1994,6 @@ func getAllowSyntheticDefaultImports(options *CompilerOptions) bool {
 		getEmitModuleResolutionKind(options) == ModuleResolutionKindBundler
 }
 
-func formatModuleResolutionKind(moduleResolution ModuleResolutionKind) string {
-	switch moduleResolution {
-	case ModuleResolutionKindNode16:
-		return "Node16"
-	case ModuleResolutionKindNodeNext:
-		return "NodeNext"
-	case ModuleResolutionKindBundler:
-		return "Bundler"
-	default:
-		panic("Unhandled case in formatModuleResolutionKind")
-	}
-}
-
 type DiagnosticsCollection struct {
 	fileDiagnostics    map[string][]*Diagnostic
 	nonFileDiagnostics []*Diagnostic
@@ -3106,7 +3093,7 @@ func pathIsRelative(path string) bool {
 }
 
 func extensionIsTs(ext string) bool {
-	return ext == ExtensionTs || ext == ExtensionTsx || ext == ExtensionDts || ext == ExtensionMts || ext == ExtensionDmts || ext == ExtensionCts || ext == ExtensionDcts || ext[:3] == ".d." && ext[len(ext)-3:] == ".ts"
+	return ext == ExtensionTs || ext == ExtensionTsx || ext == ExtensionDts || ext == ExtensionMts || ext == ExtensionDmts || ext == ExtensionCts || ext == ExtensionDcts || len(ext) >= 7 && ext[:3] == ".d." && ext[len(ext)-3:] == ".ts"
 }
 
 func isShorthandAmbientModuleSymbol(moduleSymbol *Symbol) bool {
