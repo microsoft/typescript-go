@@ -17,7 +17,7 @@ type CompilerHost interface {
 	ReadFile(fileName string) (text string, ok bool)
 	ReadDirectory(rootPath string, extensions []string) []FileInfo
 	AbsFileName(fileName string) string
-	RunTask(func())
+	RunTask(fn func())
 	WaitForTasks()
 }
 

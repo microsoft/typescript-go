@@ -3,6 +3,7 @@
 linters:
   disable-all: true
   enable:
+    # TODO(jakebailey): list everything out manually and choose; the below are just the ones that error'dx
     - nakedret
     - whitespace
     # - unparam
@@ -15,7 +16,7 @@ linters:
     # - predeclared
     # - stylecheck
     # - wastedassign
-    # - inamedparam
+    - inamedparam
     # - revive
     # - gosec
     # - mirror
