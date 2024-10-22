@@ -9,14 +9,14 @@ import (
 )
 
 type ModuleResolutionHost interface {
-	fileExists(fileName string) bool
-	readFile(fileName string) string
-	trace(msg string)
-	directoryExists(directoryName string) bool
-	realpath(path string) string
-	getCurrentDirectory() string
-	getDirectories(path string) []string
-	useCaseSensitiveFileNames() bool
+	FileExists(fileName string) bool
+	ReadFile(fileName string) string
+	Trace(msg string)
+	DirectoryExists(directoryName string) bool
+	Realpath(path string) string
+	GetCurrentDirectory() string
+	GetDirectories(path string) []string
+	UseCaseSensitiveFileNames() bool
 }
 
 const (
@@ -216,7 +216,6 @@ type ModuleResolver struct {
 	host                       ModuleResolutionHost
 	cache                      ModuleResolutionCache
 	compilerOptions            *CompilerOptions
-	traceEnabled               bool
 	failedLookupLocations      []string
 	affectingLocations         []string
 	resultFromCache            *ResolvedModuleWithFailedLookupLocations
@@ -231,11 +230,11 @@ type ModuleResolver struct {
 	esmMode                         bool
 }
 
-func NewModuleResolver(host ModuleResolutionHost, cache ModuleResolutionCache, traceEnabled bool) *ModuleResolver {
+func NewModuleResolver(host ModuleResolutionHost, cache ModuleResolutionCache, options *CompilerOptions) *ModuleResolver {
 	return &ModuleResolver{
-		host:         host,
-		cache:        cache,
-		traceEnabled: traceEnabled,
+		host:            host,
+		cache:           cache,
+		compilerOptions: options,
 	}
 }
 
@@ -245,9 +244,9 @@ func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile str
 		r.compilerOptions = redirectedReference.commandLine.options
 	}
 	if traceEnabled {
-		r.host.trace(formatMessage(diagnostics.Resolving_module_0_from_1, moduleName, containingFile))
+		r.host.Trace(formatMessage(diagnostics.Resolving_module_0_from_1, moduleName, containingFile))
 		if redirectedReference != nil {
-			r.host.trace(formatMessage(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.sourceFile.fileName))
+			r.host.Trace(formatMessage(diagnostics.Using_compiler_options_of_project_reference_redirect_0, redirectedReference.sourceFile.fileName))
 		}
 	}
 	containingDirectory := getDirectoryPath(containingFile)
@@ -258,18 +257,18 @@ func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile str
 
 	if result != nil {
 		if traceEnabled {
-			r.host.trace(formatMessage(diagnostics.Resolution_for_module_0_was_found_in_cache_from_location_1, moduleName, containingDirectory))
+			r.host.Trace(formatMessage(diagnostics.Resolution_for_module_0_was_found_in_cache_from_location_1, moduleName, containingDirectory))
 		}
 	} else {
 		moduleResolution := r.compilerOptions.ModuleResolution
 		if moduleResolution == ModuleResolutionKindUnknown {
 			moduleResolution = getEmitModuleResolutionKind(r.compilerOptions)
 			if traceEnabled {
-				r.host.trace(formatMessage(diagnostics.Module_resolution_kind_is_not_specified_using_0, formatModuleResolutionKind(moduleResolution)))
+				r.host.Trace(formatMessage(diagnostics.Module_resolution_kind_is_not_specified_using_0, formatModuleResolutionKind(moduleResolution)))
 			}
 		} else {
 			if traceEnabled {
-				r.host.trace(formatMessage(diagnostics.Explicitly_specified_module_resolution_kind_Colon_0, formatModuleResolutionKind(moduleResolution)))
+				r.host.Trace(formatMessage(diagnostics.Explicitly_specified_module_resolution_kind_Colon_0, formatModuleResolutionKind(moduleResolution)))
 			}
 		}
 
@@ -300,12 +299,12 @@ func (r *ModuleResolver) resolveModuleName(moduleName string, containingFile str
 	if traceEnabled {
 		if result.isResolved {
 			if result.resolvedModule.packageId.name != "" {
-				r.host.trace(formatMessage(diagnostics.Module_name_0_was_successfully_resolved_to_1_with_Package_ID_2, moduleName, result.resolvedModule.resolvedFileName, result.resolvedModule.packageId.String()))
+				r.host.Trace(formatMessage(diagnostics.Module_name_0_was_successfully_resolved_to_1_with_Package_ID_2, moduleName, result.resolvedModule.resolvedFileName, result.resolvedModule.packageId.String()))
 			} else {
-				r.host.trace(formatMessage(diagnostics.Module_name_0_was_successfully_resolved_to_1, moduleName, result.resolvedModule.resolvedFileName))
+				r.host.Trace(formatMessage(diagnostics.Module_name_0_was_successfully_resolved_to_1, moduleName, result.resolvedModule.resolvedFileName))
 			}
 		} else {
-			r.host.trace(formatMessage(diagnostics.Module_name_0_was_not_resolved, moduleName))
+			r.host.Trace(formatMessage(diagnostics.Module_name_0_was_not_resolved, moduleName))
 		}
 	}
 
