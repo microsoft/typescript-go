@@ -5,13 +5,16 @@ import (
 )
 
 func BenchmarkParse(b *testing.B) {
-	srcCompilerCheckerTS.SkipIfNotExist(b)
+	for _, f := range benchFixtures {
+		b.Run(f.Name(), func(b *testing.B) {
+			f.SkipIfNotExist(b)
 
-	fileName := srcCompilerCheckerTS.Path()
-	sourceText := srcCompilerCheckerTS.ReadFile(b)
+			fileName := f.Path()
+			sourceText := f.ReadFile(b)
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		ParseSourceFile(fileName, sourceText, ScriptTargetESNext)
+			for i := 0; i < b.N; i++ {
+				ParseSourceFile(fileName, sourceText, ScriptTargetESNext)
+			}
+		})
 	}
 }

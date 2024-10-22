@@ -17,5 +17,14 @@ var (
 	// Test binaries always start in the package directory; grab this early.
 	cwd = must(os.Getwd())
 
-	srcCompilerCheckerTS = testutil.NewFixture(cwd, "../../_submodules/TypeScript/src/compiler/checker.ts")
+	emptyFile = testutil.NewFileFixtureFromString("empty.ts", "empty.ts", "")
+	checkerTs = testutil.NewFileFixtureFromFile("checker.ts", []string{cwd, "../../_submodules/TypeScript/src/compiler/checker.ts"})
+	// largeTsxFile = testutil.NewFixture("jsxComplexSignatureHasApplicabilityError.tsx", []string{cwd, "../../_submodules/TypeScript/tests/cases/compiler/jsxComplexSignatureHasApplicabilityError.tsx"})
+
+	benchFixtures = []testutil.FileFixture{
+		emptyFile,
+		checkerTs,
+		// This crashes in bind.
+		// largeTsxFile,
+	}
 )
