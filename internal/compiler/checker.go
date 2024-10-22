@@ -2471,7 +2471,7 @@ func (c *Checker) getExportsOfModuleWorker(moduleSymbol *Symbol) (exports Symbol
 	for name := range nonTypeOnlyNames {
 		delete(typeOnlyExportStarMap, name)
 	}
-	return
+	return exports, typeOnlyExportStarMap
 }
 
 /**

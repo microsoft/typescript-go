@@ -1916,7 +1916,7 @@ func (p *Parser) parseImportOrExportSpecifier(kind SyntaxKind) (isTypeOnly bool,
 		p.parseExpected(SyntaxKindAsKeyword)
 		name = p.parseModuleExportName(kind == SyntaxKindImportSpecifier /*disallowKeywords*/)
 	}
-	return
+	return isTypeOnly, propertyName, name
 }
 
 func (p *Parser) canParseModuleExportName() bool {
