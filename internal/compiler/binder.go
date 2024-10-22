@@ -63,6 +63,7 @@ type Binder struct {
 	flowNodePool           Pool[FlowNode]
 	flowListPool           Pool[FlowList]
 	singleDeclarations     []*Node
+	bind_                  func(node *Node) bool
 }
 
 type ModuleInstanceState int32
@@ -1692,7 +1693,10 @@ func (b *Binder) bindChildren(node *Node) {
 }
 
 func (b *Binder) bindEachChild(node *Node) {
-	node.ForEachChild(b.bind)
+	if b.bind_ == nil {
+		b.bind_ = b.bind
+	}
+	node.ForEachChild(b.bind_)
 }
 
 func (b *Binder) bindEachExpression(nodes []*Node) {
