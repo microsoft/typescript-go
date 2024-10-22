@@ -19,7 +19,7 @@ linters:
     - inamedparam
     # - revive
     # - gosec
-    # - mirror
+    - mirror
     # - gocritic
 
     # Maybe not

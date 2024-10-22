@@ -1004,7 +1004,7 @@ func (s *Scanner) scanIdentifierParts() string {
 			escaped := s.peekUnicodeEscape()
 			if escaped >= 0 && isIdentifierPart(escaped, s.languageVersion, s.languageVariant) {
 				sb.WriteString(s.text[start:s.pos])
-				sb.WriteString(string(s.scanUnicodeEscape(true)))
+				sb.WriteRune(s.scanUnicodeEscape(true))
 				start = s.pos
 				continue
 			}
