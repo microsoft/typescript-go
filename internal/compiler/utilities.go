@@ -441,6 +441,14 @@ func formatStringFromArgs(text string, args []any) string {
 	})
 }
 
+func formatMessage(message *diagnostics.Message, args ...any) string {
+	text := message.Message()
+	if len(args) != 0 {
+		text = formatStringFromArgs(text, args)
+	}
+	return text
+}
+
 func filter[T any](slice []T, predicate func(T) bool) []T {
 	var result []T
 	for _, value := range slice {
@@ -1952,15 +1960,16 @@ func getEmitModuleResolutionKind(options *CompilerOptions) ModuleResolutionKind 
 	}
 	switch getEmitModuleKind(options) {
 	case ModuleKindCommonJS:
-		return ModuleResolutionKindNode10
+		return ModuleResolutionKindBundler
 	case ModuleKindNode16:
 		return ModuleResolutionKindNode16
 	case ModuleKindNodeNext:
 		return ModuleResolutionKindNodeNext
 	case ModuleKindPreserve:
 		return ModuleResolutionKindBundler
+	default:
+		panic("Unhandled case in getEmitModuleResolutionKind")
 	}
-	return ModuleResolutionKindClassic
 }
 
 func getESModuleInterop(options *CompilerOptions) bool {
@@ -1983,6 +1992,19 @@ func getAllowSyntheticDefaultImports(options *CompilerOptions) bool {
 	return getESModuleInterop(options) ||
 		getEmitModuleKind(options) == ModuleKindSystem ||
 		getEmitModuleResolutionKind(options) == ModuleResolutionKindBundler
+}
+
+func formatModuleResolutionKind(moduleResolution ModuleResolutionKind) string {
+	switch moduleResolution {
+	case ModuleResolutionKindNode16:
+		return "Node16"
+	case ModuleResolutionKindNodeNext:
+		return "NodeNext"
+	case ModuleResolutionKindBundler:
+		return "Bundler"
+	default:
+		panic("Unhandled case in formatModuleResolutionKind")
+	}
 }
 
 type DiagnosticsCollection struct {
@@ -3081,10 +3103,6 @@ func isExternalModuleNameRelative(moduleName string) bool {
 
 func pathIsRelative(path string) bool {
 	return makeRegexp(`^\.\.?(?:$|[\\/])`).MatchString(path)
-}
-
-func isRootedDiskPath(path string) bool {
-	return false // !!!
 }
 
 func isShorthandAmbientModuleSymbol(moduleSymbol *Symbol) bool {
