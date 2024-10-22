@@ -52,33 +52,34 @@ func getFileUrlVolumeSeparatorEnd(url string, start int) int {
 }
 
 func getEncodedRootLength(path string) int {
-	if len(path) == 0 {
+	ln := len(path)
+	if ln == 0 {
 		return 0
 	}
 	ch0 := path[0]
 
 	// POSIX or UNC
 	if ch0 == '/' || ch0 == '\\' {
-		if path[1] != ch0 {
+		if ln == 1 || path[1] != ch0 {
 			return 1 // POSIX: "/" (or non-normalized "\")
 		}
 
 		p1 := strings.IndexByte(path[2:], ch0)
 		if p1 < 0 {
-			return len(path) // UNC: "//server" or "\\server"
+			return ln // UNC: "//server" or "\\server"
 		}
 
 		return p1 + 1 // UNC: "//server/" or "\\server\"
 	}
 
 	// DOS
-	if isVolumeCharacter(ch0) && path[1] == ':' {
+	if isVolumeCharacter(ch0) && ln > 1 && path[1] == ':' {
+		if ln == 2 {
+			return 2 // DOS: "c:" (but not "c:d")
+		}
 		ch2 := path[2]
 		if ch2 == '/' || ch2 == '\\' {
 			return 3 // DOS: "c:/" or "c:\"
-		}
-		if len(path) == 2 {
-			return 2 // DOS: "c:" (but not "c:d")
 		}
 	}
 
@@ -109,7 +110,7 @@ func getEncodedRootLength(path string) int {
 			}
 			return ^(authorityEnd + 1) // URL: "file://server/", "http://server/"
 		}
-		return ^len(path) // URL: "file://server", "http://server"
+		return ^ln // URL: "file://server", "http://server"
 	}
 
 	// relative
