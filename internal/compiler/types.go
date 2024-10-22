@@ -1,6 +1,6 @@
 package compiler
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=SyntaxKind -trimprefix=SyntaxKind
+//go:generate go run golang.org/x/tools/cmd/stringer -type=SyntaxKind,SignatureKind,ScriptKind,ScriptTarget,LanguageVariant,Tristate -output=stringer_generated.go
 
 type SyntaxKind int16
 
@@ -675,16 +675,12 @@ const (
 	CheckFlagsPartial                      = CheckFlagsReadPartial | CheckFlagsWritePartial
 )
 
-//go:generate go run golang.org/x/tools/cmd/stringer -type=SignatureKind -trimprefix=SignatureKind
-
 type SignatureKind int32
 
 const (
 	SignatureKindCall SignatureKind = iota
 	SignatureKindConstruct
 )
-
-//go:generate go run golang.org/x/tools/cmd/stringer -type=ScriptKind -trimprefix=ScriptKind
 
 type ScriptKind int32
 
@@ -702,8 +698,6 @@ const (
 	 */
 	ScriptKindDeferred
 )
-
-//go:generate go run golang.org/x/tools/cmd/stringer -type=ScriptTarget -trimprefix=ScriptTarget
 
 type ScriptTarget int32
 
@@ -724,8 +718,6 @@ const (
 	ScriptTargetJSON   ScriptTarget = 100
 	ScriptTargetLatest ScriptTarget = ScriptTargetESNext
 )
-
-//go:generate go run golang.org/x/tools/cmd/stringer -type=LanguageVariant -trimprefix=LanguageVariant
 
 type LanguageVariant int32
 
@@ -876,8 +868,6 @@ type FlowReduceLabelData struct {
 }
 
 // Tristate
-
-//go:generate go run golang.org/x/tools/cmd/stringer -type=Tristate -trimprefix=TS
 
 type Tristate byte
 
