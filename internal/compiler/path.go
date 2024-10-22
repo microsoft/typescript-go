@@ -1,7 +1,7 @@
 package compiler
 
 import (
-	"path/filepath"
+	"path"
 	"strings"
 )
 
@@ -16,7 +16,7 @@ func hasTrailingDirectorySeparator(path string) bool {
 }
 
 func combinePaths(paths ...string) string {
-	return filepath.Join(paths...)
+	return path.Join(paths...)
 }
 
 func getPathComponents(path string, currentDirectory string) []string {
