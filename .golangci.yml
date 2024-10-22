@@ -5,11 +5,11 @@ linters:
   enable:
     - nakedret
     - whitespace
-    # - staticcheck
     # - unparam
-    # - unconvert
+    - unconvert
     # - prealloc
     # - errcheck
+    # - staticcheck
 
     # Maybe
     # - predeclared

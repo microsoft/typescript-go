@@ -1150,7 +1150,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 			} else {
 				s.errorAt(diagnostics.Escape_sequence_0_is_not_allowed, start, s.pos-start, s.text[start:s.pos])
 			}
-			return string(rune(ch))
+			return string(ch)
 		}
 		return s.text[start:s.pos]
 	case 'b':
@@ -1213,7 +1213,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 || flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAnnexB == 0 && isIdentifierPart(ch, s.languageVersion, LanguageVariantStandard) {
 			s.errorAt(diagnostics.This_character_cannot_be_escaped_in_a_regular_expression, s.pos-2, 2)
 		}
-		return string(rune(ch))
+		return string(ch)
 	}
 }
 
