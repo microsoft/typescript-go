@@ -2738,7 +2738,6 @@ func (p *Parser) parseParametersWorker(flags SignatureFlags, allowAmbiguity bool
 	})
 	p.contextFlags = saveContextFlags
 	return parameters
-
 }
 
 func (p *Parser) parseParameter() *Node {
@@ -3149,7 +3148,6 @@ func (p *Parser) getTemplateLiteralRawText(endLength int) string {
 		endLength = 0
 	}
 	return tokenText[1 : len(tokenText)-endLength]
-
 }
 
 func (p *Parser) parseTemplateTypeSpans() []*Node {

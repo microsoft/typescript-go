@@ -1787,7 +1787,6 @@ func (c *Checker) errorNoModuleMemberSymbol(moduleSymbol *Symbol, targetSymbol *
 	} else {
 		if moduleSymbol.exports[InternalSymbolNameDefault] != nil {
 			c.error(name, diagnostics.Module_0_has_no_exported_member_1_Did_you_mean_to_use_import_1_from_0_instead, moduleName, declarationName)
-
 		} else {
 			c.reportNonExportedMember(node, name, declarationName, moduleSymbol, moduleName)
 		}
