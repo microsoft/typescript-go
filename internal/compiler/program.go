@@ -577,8 +577,8 @@ func writeLocation(output *strings.Builder, file *SourceFile, pos int, formatOpt
 	}
 
 	writeWithStyleAndReset(output, relativeFileName, foregroundColorEscapeCyan)
-	output.WriteRune(':')
+	output.WriteByte(':')
 	writeWithStyleAndReset(output, strconv.Itoa(firstLine+1), foregroundColorEscapeYellow)
-	output.WriteRune(':')
+	output.WriteByte(':')
 	writeWithStyleAndReset(output, strconv.Itoa(firstChar+1), foregroundColorEscapeYellow)
 }
