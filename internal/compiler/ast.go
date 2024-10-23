@@ -1,7 +1,5 @@
 package compiler
 
-import "reflect"
-
 // Visitor
 
 type Visitor func(*Node) bool
@@ -20,12 +18,6 @@ func visitNodes(v Visitor, nodes []*Node) bool {
 		}
 	}
 	return false
-}
-
-// In situations where conversions from a pointer type may produce a typed nil, this function can be used
-// to check that the interface truly references an existing struct.
-func exists(i interface{}) bool {
-	return !(i == nil || reflect.ValueOf(i).IsNil())
 }
 
 // NodeFactory
@@ -2808,7 +2800,7 @@ type NonNullExpression struct {
 func (f *NodeFactory) NewNonNullExpression(expression *Node) *Node {
 	data := &NonNullExpression{}
 	data.expression = expression
-	return f.NewNode(SyntaxKindNewExpression, data)
+	return f.NewNode(SyntaxKindNonNullExpression, data)
 }
 
 func (node *NonNullExpression) ForEachChild(v Visitor) bool {
@@ -2886,7 +2878,7 @@ func (f *NodeFactory) NewTaggedTemplateExpression(tag *Node, questionDotToken *N
 	data.questionDotToken = questionDotToken
 	data.typeArguments = typeArguments
 	data.template = template
-	node := f.NewNode(SyntaxKindTemplateExpression, data)
+	node := f.NewNode(SyntaxKindTaggedTemplateExpression, data)
 	node.flags |= flags & NodeFlagsOptionalChain
 	return node
 }
