@@ -430,7 +430,7 @@ func FormatDiagnosticsWithColorAndContext(diags []*Diagnostic, formatOpts *Diagn
 			output.WriteString(" - ")
 		}
 
-		writeWithStyleAndReset(&output, DiagnosticCategoryName(diagnostic.Category()), getCategoryFormat(diagnostic.Category()))
+		writeWithStyleAndReset(&output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
 		fmt.Fprintf(&output, "%s TS%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
 		WriteFlattenedDiagnosticMessage(&output, diagnostic, formatOpts.NewLine, 0 /*indent*/)
 

@@ -10,6 +10,20 @@ const (
 	CategoryMessage
 )
 
+func (c Category) Name() string {
+	switch c {
+	case CategoryWarning:
+		return "warning"
+	case CategoryError:
+		return "error"
+	case CategorySuggestion:
+		return "suggestion"
+	case CategoryMessage:
+		return "message"
+	}
+	panic("Unhandled diagnostic category")
+}
+
 type Message struct {
 	code                         int32
 	category                     Category

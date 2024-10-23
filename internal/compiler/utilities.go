@@ -167,20 +167,6 @@ func addRelatedInfo(diagnostic *Diagnostic, relatedInformation ...*Diagnostic) *
 	return diagnostic
 }
 
-func DiagnosticCategoryName(category diagnostics.Category) string {
-	switch category {
-	case diagnostics.CategoryWarning:
-		return "warning"
-	case diagnostics.CategoryError:
-		return "error"
-	case diagnostics.CategorySuggestion:
-		return "suggestion"
-	case diagnostics.CategoryMessage:
-		return "message"
-	}
-	panic("Unhandled diagnostic category")
-}
-
 type OperatorPrecedence int
 
 const (
