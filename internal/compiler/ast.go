@@ -3006,20 +3006,22 @@ type ShorthandPropertyAssignment struct {
 	NodeBase
 	NamedMemberBase
 	ObjectLiteralElementBase
+	equalsToken *Node // optional
 	objectAssignmentInitializer *Node // Optional
 }
 
-func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *Node, name *Node, postfixToken *Node, objectAssignmentInitializer *Node) *Node {
+func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *Node, name *Node, postfixToken *Node, equalsToken *Node, objectAssignmentInitializer *Node) *Node {
 	data := &ShorthandPropertyAssignment{}
 	data.modifiers = modifiers
 	data.name = name
 	data.postfixToken = postfixToken
+	data.equalsToken = equalsToken
 	data.objectAssignmentInitializer = objectAssignmentInitializer
 	return f.NewNode(SyntaxKindShorthandPropertyAssignment, data)
 }
 
 func (node *ShorthandPropertyAssignment) ForEachChild(v Visitor) bool {
-	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.objectAssignmentInitializer)
+	return visit(v, node.modifiers) || visit(v, node.name) || visit(v, node.postfixToken) || visit(v, node.equalsToken) || visit(v, node.objectAssignmentInitializer)
 }
 
 func isShorthandPropertyAssignment(node *Node) bool {

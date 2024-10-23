@@ -5142,13 +5142,15 @@ func (p *Parser) parseObjectLiteralElement() *Node {
 	//     IdentifierReference[?Yield] Initializer[In, ?Yield]
 	// this is necessary because ObjectLiteral productions are also used to cover grammar for ObjectAssignmentPattern
 	var node *Node
+	var equalsToken *Node
 	isShorthandPropertyAssignment := tokenIsIdentifier && p.token != SyntaxKindColonToken
 	if isShorthandPropertyAssignment {
 		var initializer *Expression
-		if p.parseOptional(SyntaxKindEqualsToken) {
+		equalsToken = p.parseOptionalToken(SyntaxKindEqualsToken)
+		if equalsToken != nil {
 			initializer = doInContext(p, NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)
 		}
-		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, initializer)
+		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, equalsToken, initializer)
 	} else {
 		p.parseExpected(SyntaxKindColonToken)
 		initializer := doInContext(p, NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)
