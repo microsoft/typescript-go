@@ -70,9 +70,15 @@ func main() {
 			} else {
 				getCanonicalFileName = strings.ToLower
 			}
+
+			currentDirectory, err := os.Getwd()
+			if err != nil {
+				currentDirectory = ""
+			}
+
 			output := ts.FormatDiagnosticsWithColorAndContext(diagnostics, &ts.DiagnosticsFormattingOptions{
 				NewLine:              "\n",
-				CurrentDirectory:     rootPath,
+				CurrentDirectory:     currentDirectory,
 				GetCanonicalFileName: getCanonicalFileName,
 			})
 			fmt.Println(output)

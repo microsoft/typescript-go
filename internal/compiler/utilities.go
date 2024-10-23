@@ -3141,12 +3141,10 @@ func extensionIsTs(ext string) bool {
 func ConvertToRelativePath(absoluteOrRelativePath, basePath string, getCanonicalFileName func(fileName string) string) string {
 	/// !!!
 	/// May have some differences with original.
-	resolvedRelativePath, err := filepath.Rel(basePath, getCanonicalFileName(absoluteOrRelativePath))
-
-	if err != nil {
-		return absoluteOrRelativePath
+	if resolvedRelativePath, err := filepath.Rel(basePath, getCanonicalFileName(absoluteOrRelativePath)); err == nil {
+		return resolvedRelativePath
 	}
-	return resolvedRelativePath
+	return absoluteOrRelativePath
 }
 
 func isShorthandAmbientModuleSymbol(moduleSymbol *Symbol) bool {
