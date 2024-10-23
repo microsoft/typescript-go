@@ -413,8 +413,6 @@ const (
 	gutterSeparator     = " "
 	resetEscapeSequence = "\u001b[0m"
 	ellipsis            = "..."
-	halfIndent          = "  "
-	indent              = "    "
 )
 
 func FormatDiagnosticsWithColorAndContext(diags []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
