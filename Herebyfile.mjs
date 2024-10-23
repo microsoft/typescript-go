@@ -5,12 +5,23 @@ import { task } from "hereby";
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
+import { parseArgs } from "node:util";
 
 const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
 
 const $pipe = _$({ verbose: "short" });
 const $ = _$({ verbose: "short", stdio: "inherit" });
+
+const { values: options } = parseArgs({
+    args: process.argv.slice(2),
+    options: {
+        race: { type: "boolean" },
+    },
+    strict: false,
+    allowPositionals: true,
+    allowNegative: true,
+});
 
 const typeScriptSubmodulePath = path.join(__dirname, "_submodules", "TypeScript");
 
@@ -45,7 +56,8 @@ export const test = task({
     name: "test",
     run: async () => {
         assertTypeScriptCloned();
-        await $`go test -race -bench=. -benchtime=1x ./...`;
+        await $`go test ${options.race ? ["-race"] : []} ./...`;
+        await $`go test ${options.race ? ["-race"] : []} -run=- -bench=. -benchtime=1x ./...`;
     },
 });
 
