@@ -1375,14 +1375,22 @@ type UniqueESSymbolType struct {
 
 type ObjectType struct {
 	TypeBase
-	members             SymbolTable
-	properties          []*Symbol
-	callSignatures      []*Signature
-	constructSignatures []*Signature
-	indexInfos          []*IndexInfo
+	members            SymbolTable
+	properties         []*Symbol
+	signatures         []*Signature // Signatures (call + construct)
+	callSignatureCount int          // Count of call signatures
+	indexInfos         []*IndexInfo
 }
 
 func (t *ObjectType) AsObjectType() *ObjectType { return t }
+
+func (t *ObjectType) CallSignatures() []*Signature {
+	return t.signatures[0:t.callSignatureCount:t.callSignatureCount]
+}
+
+func (t *ObjectType) ConstructSignatures() []*Signature {
+	return t.signatures[t.callSignatureCount:len(t.signatures):len(t.signatures)]
+}
 
 // InstantiatedTypeData
 
@@ -1406,9 +1414,8 @@ func (t *ParameterizedType) AsParameterizedType() *ParameterizedType { return t 
 
 type InterfaceType struct {
 	ParameterizedType
-	typeParameters              []*Type // Type parameters
-	outerTypeParameters         []*Type // Outer type parameters
-	localTypeParameters         []*Type // Local type parameters
+	allTypeParameters           []*Type // Type parameters (outer + local + thisType)
+	outerTypeParameterCount     int     // Count of outer type parameters
 	thisType                    *Type   // The "this" type (nil if none)
 	variances                   []VarianceFlags
 	baseTypesResolved           bool
@@ -1420,6 +1427,27 @@ type InterfaceType struct {
 	declaredConstructSignatures []*Signature // Declared construct signatures
 	declaredIndexInfos          []*IndexInfo // Declared index signatures
 	tupleData                   *TupleData   // Additional data for tuple types
+}
+
+func (t *InterfaceType) OuterTypeParameters() []*Type {
+	if len(t.allTypeParameters) == 0 {
+		return nil
+	}
+	return t.allTypeParameters[:t.outerTypeParameterCount:t.outerTypeParameterCount]
+}
+
+func (t *InterfaceType) LocalTypeParameters() []*Type {
+	if len(t.allTypeParameters) == 0 {
+		return nil
+	}
+	return t.allTypeParameters[t.outerTypeParameterCount : len(t.allTypeParameters)-1 : len(t.allTypeParameters)-1]
+}
+
+func (t *InterfaceType) TypeParameters() []*Type {
+	if len(t.allTypeParameters) == 0 {
+		return nil
+	}
+	return t.allTypeParameters[: len(t.allTypeParameters)-1 : len(t.allTypeParameters)-1]
 }
 
 type ElementFlags uint32

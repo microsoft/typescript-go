@@ -3070,25 +3070,21 @@ func (c *Checker) getDeclaredTypeOfClassOrInterface(symbol *Symbol) *Type {
 		t := c.newInterfaceType(kind, symbol)
 		links.declaredType = t
 		outerTypeParameters := c.getOuterTypeParametersOfClassOrInterface(symbol)
-		localTypeParameters := c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
+		typeParameters := c.appendLocalTypeParametersOfClassOrInterfaceOrTypeAlias(outerTypeParameters, symbol)
 		// A class or interface is generic if it has type parameters or a "this" type. We always give classes a "this" type
 		// because it is not feasible to analyze all members to determine if the "this" type escapes the class (in particular,
 		// property types inferred from initializers and method return types inferred from return statements are very hard
 		// to exhaustively analyze). We give interfaces a "this" type if we can't definitely determine that they are free of
 		// "this" references.
-		if outerTypeParameters != nil || localTypeParameters != nil || kind == ObjectFlagsClass || !c.isThislessInterface(symbol) {
+		if typeParameters != nil || kind == ObjectFlagsClass || !c.isThislessInterface(symbol) {
 			t.objectFlags |= ObjectFlagsReference
 			d := t.AsInterfaceType()
 			d.thisType = c.newTypeParameter(symbol)
 			d.thisType.AsTypeParameter().isThisType = true
 			d.thisType.AsTypeParameter().constraint = t
-			// Allocate room for all type parameters plus the extra thisType
-			d.typeParameters = append(append(make([]*Type, 0, len(outerTypeParameters)+len(localTypeParameters)+1), outerTypeParameters...), localTypeParameters...)
-			// Append thisType such that t.typeParameters[:len(t.typeParameters)+1] yields the full list
-			_ = append(d.typeParameters, d.thisType)
-			d.resolvedTypeArguments = d.typeParameters
-			d.outerTypeParameters = outerTypeParameters
-			d.localTypeParameters = localTypeParameters
+			d.allTypeParameters = append(typeParameters, d.thisType)
+			d.outerTypeParameterCount = len(outerTypeParameters)
+			d.resolvedTypeArguments = d.TypeParameters()
 			d.instantiations = make(map[string]*Type)
 			d.instantiations[getTypeListId(d.resolvedTypeArguments)] = t
 			d.target = t
@@ -3566,9 +3562,9 @@ func (c *Checker) getPropertyOfTypeEx(t *Type, name string, skipObjectFunctionPr
 			switch {
 			case t == c.anyFunctionType:
 				functionType = c.globalFunctionType
-			case len(resolved.callSignatures) != 0:
+			case len(resolved.CallSignatures()) != 0:
 				functionType = c.globalCallableFunctionType
-			case len(resolved.constructSignatures) != 0:
+			case len(resolved.ConstructSignatures()) != 0:
 				functionType = c.globalNewableFunctionType
 			}
 			if functionType != nil {
@@ -3654,9 +3650,7 @@ func (c *Checker) resolveClassOrInterfaceMembers(t *Type) {
 
 func (c *Checker) resolveTypeReferenceMembers(t *Type) {
 	source := t.AsParameterizedType().target
-	// Interface type construction guarantees thisType is stored just past type parameters
-	typeParameters := source.AsInterfaceType().typeParameters
-	typeParameters = typeParameters[:len(typeParameters)+1]
+	typeParameters := source.AsInterfaceType().allTypeParameters
 	typeArguments := c.getTypeArguments(t)
 	paddedTypeArguments := typeArguments
 	if len(typeArguments) == len(typeParameters)-1 {
@@ -3733,7 +3727,7 @@ func (c *Checker) getTypeWithThisArgument(t *Type, thisArgument *Type, needAppar
 	if t.objectFlags&ObjectFlagsReference != 0 {
 		target := t.AsTypeReference().target
 		typeArguments := c.getTypeArguments(t)
-		if len(target.AsInterfaceType().typeParameters) == len(typeArguments) {
+		if len(target.AsInterfaceType().TypeParameters()) == len(typeArguments) {
 			if thisArgument == nil {
 				thisArgument = target.AsInterfaceType().thisType
 			}
@@ -3860,7 +3854,8 @@ func (c *Checker) resolveAnonymousTypeMembers(t *Type) {
 	// in the process of resolving (see issue #6072). The temporarily empty signature list
 	// will never be observed because a qualified name can't reference signatures.
 	if symbol.flags&(SymbolFlagsFunction|SymbolFlagsMethod) != 0 {
-		d.callSignatures = c.getSignaturesOfSymbol(symbol)
+		d.signatures = c.getSignaturesOfSymbol(symbol)
+		d.callSignatureCount = len(d.signatures)
 	}
 	// And likewise for construct signatures for classes
 	if symbol.flags&SymbolFlagsClass != 0 {
@@ -3869,7 +3864,7 @@ func (c *Checker) resolveAnonymousTypeMembers(t *Type) {
 		if len(constructSignatures) == 0 {
 			constructSignatures = c.getDefaultConstructSignatures(classType)
 		}
-		d.constructSignatures = constructSignatures
+		d.signatures = append(d.signatures, constructSignatures...)
 	}
 }
 
@@ -4010,14 +4005,14 @@ func (c *Checker) getTypeArguments(t *Type) []*Type {
 	if d.resolvedTypeArguments == nil {
 		n := d.target.AsInterfaceType()
 		if !c.pushTypeResolution(t, TypeSystemPropertyNameResolvedTypeArguments) {
-			return slices.Repeat([]*Type{c.errorType}, len(n.outerTypeParameters)+len(n.localTypeParameters))
+			return slices.Repeat([]*Type{c.errorType}, len(n.TypeParameters()))
 		}
 		var typeArguments []*Type
 		node := t.AsTypeReference().node
 		if node != nil {
 			switch node.kind {
 			case SyntaxKindTypeReference:
-				typeArguments = concatenate(n.outerTypeParameters, c.getEffectiveTypeArguments(node.AsTypeReference().typeArguments, n.localTypeParameters))
+				typeArguments = append(n.OuterTypeParameters(), c.getEffectiveTypeArguments(node.AsTypeReference().typeArguments, n.LocalTypeParameters())...)
 			case SyntaxKindArrayType:
 				typeArguments = []*Type{c.getTypeFromTypeNode(node.AsArrayTypeNode().elementType)}
 			case SyntaxKindTupleType:
@@ -4032,7 +4027,7 @@ func (c *Checker) getTypeArguments(t *Type) []*Type {
 			}
 		} else {
 			if d.resolvedTypeArguments == nil {
-				d.resolvedTypeArguments = slices.Repeat([]*Type{c.errorType}, len(n.outerTypeParameters)+len(n.localTypeParameters))
+				d.resolvedTypeArguments = slices.Repeat([]*Type{c.errorType}, len(n.TypeParameters()))
 			}
 			errorNode := ifElse(node != nil, node, c.currentNode)
 			if d.target.symbol != nil {
@@ -4345,7 +4340,7 @@ func (c *Checker) getTypeReferenceType(node *Node, symbol *Symbol) *Type {
 func (c *Checker) getTypeFromClassOrInterfaceReference(node *Node, symbol *Symbol) *Type {
 	t := c.getDeclaredTypeOfClassOrInterface(c.getMergedSymbol(symbol))
 	d := t.AsInterfaceType()
-	typeParameters := d.localTypeParameters
+	typeParameters := d.LocalTypeParameters()
 	if len(typeParameters) != 0 {
 		numTypeArguments := len(c.getTypeArgumentNodesFromNode(node))
 		minTypeArgumentCount := c.getMinTypeArgumentCount(typeParameters)
@@ -4366,7 +4361,7 @@ func (c *Checker) getTypeFromClassOrInterfaceReference(node *Node, symbol *Symbo
 		// supplied as type arguments and the type reference only specifies arguments for the local type parameters
 		// of the class or interface.
 		localTypeArguments := c.fillMissingTypeArguments(c.getTypeArgumentsFromNode(node), typeParameters, minTypeArgumentCount)
-		typeArguments := concatenate(d.outerTypeParameters, localTypeArguments)
+		typeArguments := append(d.OuterTypeParameters(), localTypeArguments...)
 		return c.createTypeReference(t, typeArguments)
 	}
 	if c.checkNoTypeArguments(node, symbol) {
@@ -4560,7 +4555,7 @@ func (c *Checker) getElementTypes(t *Type) []*Type {
 }
 
 func (c *Checker) getTypeReferenceArity(t *Type) int {
-	return len(t.TargetInterfaceType().typeParameters)
+	return len(t.TargetInterfaceType().TypeParameters())
 }
 
 func (c *Checker) isArrayType(t *Type) bool {
@@ -4835,13 +4830,16 @@ func (c *Checker) getInferTypeParameters(node *Node) []*Type {
 // The local type parameters are the combined set of type parameters from all declarations of the class,
 // interface, or type alias.
 func (c *Checker) getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol *Symbol) []*Type {
-	var result []*Type
+	return c.appendLocalTypeParametersOfClassOrInterfaceOrTypeAlias(nil, symbol)
+}
+
+func (c *Checker) appendLocalTypeParametersOfClassOrInterfaceOrTypeAlias(types []*Type, symbol *Symbol) []*Type {
 	for _, node := range symbol.declarations {
 		if nodeKindIs(node, SyntaxKindInterfaceDeclaration, SyntaxKindClassDeclaration, SyntaxKindClassExpression) || isTypeAlias(node) {
-			result = c.appendTypeParameters(result, getEffectiveTypeParameterDeclarations(node))
+			types = c.appendTypeParameters(types, getEffectiveTypeParameterDeclarations(node))
 		}
 	}
-	return result
+	return types
 }
 
 // Appends the type parameters given by a list of declarations to a set of type parameters and returns the resulting set.
@@ -5013,7 +5011,7 @@ func (c *Checker) getTypeOfGlobalSymbol(symbol *Symbol, arity int) *Type {
 	if symbol != nil {
 		t := c.getDeclaredTypeOfSymbol(symbol)
 		if t.flags&TypeFlagsObject != 0 {
-			if len(t.AsInterfaceType().typeParameters) == arity {
+			if len(t.AsInterfaceType().TypeParameters()) == arity {
 				return t
 			} else {
 				c.error(getGlobalTypeDeclaration(symbol), diagnostics.Global_type_0_must_have_1_type_parameter_s, symbolName(symbol), arity)
@@ -5209,16 +5207,14 @@ func (c *Checker) createTupleTargetType(elementInfos []TupleElementInfo, readonl
 	members[lengthSymbol.name] = lengthSymbol
 	t := c.newInterfaceType(ObjectFlagsTuple|ObjectFlagsReference, nil)
 	d := t.AsInterfaceType()
-	d.typeParameters = typeParameters
-	d.outerTypeParameters = nil
-	d.localTypeParameters = typeParameters
-	d.instantiations = make(map[string]*Type)
-	d.instantiations[getTypeListId(d.typeParameters)] = t
-	d.target = t
-	d.resolvedTypeArguments = d.typeParameters
 	d.thisType = c.newTypeParameter(nil)
 	d.thisType.AsTypeParameter().isThisType = true
 	d.thisType.AsTypeParameter().constraint = t
+	d.allTypeParameters = append(typeParameters, d.thisType)
+	d.instantiations = make(map[string]*Type)
+	d.instantiations[getTypeListId(d.TypeParameters())] = t
+	d.target = t
+	d.resolvedTypeArguments = d.TypeParameters()
 	d.declaredMembersResolved = true
 	d.declaredMembers = members
 	d.tupleData = &TupleData{}
@@ -5312,9 +5308,22 @@ func (c *Checker) setStructuredTypeMembers(t *Type, members SymbolTable, callSig
 	data := t.AsObjectType()
 	data.members = members
 	data.properties = c.getNamedMembers(members)
-	data.callSignatures = callSignatures
-	data.constructSignatures = constructSignatures
-	data.indexInfos = indexInfos
+	if len(callSignatures) != 0 {
+		if len(constructSignatures) != 0 {
+			data.signatures = concatenate(callSignatures, constructSignatures)
+		} else {
+			data.signatures = callSignatures[0:len(callSignatures):len(callSignatures)]
+		}
+		data.callSignatureCount = len(callSignatures)
+	} else {
+		if len(constructSignatures) != 0 {
+			data.signatures = constructSignatures[0:len(constructSignatures):len(constructSignatures)]
+		} else {
+			data.signatures = nil
+		}
+		data.callSignatureCount = 0
+	}
+	data.indexInfos = indexInfos[0:len(indexInfos):len(indexInfos)]
 }
 
 func (c *Checker) newInterfaceType(objectFlags ObjectFlags, symbol *Symbol) *Type {
@@ -6245,7 +6254,7 @@ func (c *Checker) isEmptyAnonymousObjectType(t *Type) bool {
 }
 
 func (c *Checker) isEmptyResolvedType(t *ObjectType) bool {
-	return t.AsType() != c.anyFunctionType && len(t.properties) == 0 && len(t.callSignatures) == 0 && len(t.constructSignatures) == 0 && len(t.indexInfos) == 0
+	return t.AsType() != c.anyFunctionType && len(t.properties) == 0 && len(t.signatures) == 0 && len(t.indexInfos) == 0
 }
 
 func (c *Checker) isPatternLiteralPlaceholderType(t *Type) bool {
