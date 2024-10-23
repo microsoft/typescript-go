@@ -14,19 +14,12 @@ type BaselineOptions struct {
 
 const NoContent = "<no content>"
 
-func RunBaseline(fileName string, actual string, opts ...BaselineOptions) error {
-	if len(opts) > 1 {
-		panic("Too many options")
-	}
-	var opt BaselineOptions
-	if len(opts) == 1 {
-		opt = opts[0]
-	}
+func RunBaseline(fileName string, actual string, opts BaselineOptions) error {
 	if actual == "" {
 		panic("The generated content was \"\". Return 'baseline.NoContent' if no baselining is required.")
 	}
 
-	return writeComparison(actual, fileName, opt)
+	return writeComparison(actual, fileName, opts)
 }
 
 func writeComparison(actual string, relativeFileName string, opts BaselineOptions) error {
