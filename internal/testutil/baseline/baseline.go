@@ -8,13 +8,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/repo"
 )
 
-type BaselineOptions struct {
+type Options struct {
 	Subfolder string
 }
 
 const NoContent = "<no content>"
 
-func RunBaseline(fileName string, actual string, opts BaselineOptions) error {
+func Run(fileName string, actual string, opts Options) error {
 	if actual == "" {
 		panic("The generated content was \"\". Return 'baseline.NoContent' if no baselining is required.")
 	}
@@ -22,7 +22,7 @@ func RunBaseline(fileName string, actual string, opts BaselineOptions) error {
 	return writeComparison(actual, fileName, opts)
 }
 
-func writeComparison(actual string, relativeFileName string, opts BaselineOptions) error {
+func writeComparison(actual string, relativeFileName string, opts Options) error {
 	localFileName := localPath(relativeFileName, opts.Subfolder)
 	referenceFileName := referencePath(relativeFileName, opts.Subfolder)
 	expected := getExpectedContent(relativeFileName, opts)
@@ -53,7 +53,7 @@ func writeComparison(actual string, relativeFileName string, opts BaselineOption
 	return nil
 }
 
-func getExpectedContent(relativeFileName string, opts BaselineOptions) string {
+func getExpectedContent(relativeFileName string, opts Options) string {
 	refFileName := referencePath(relativeFileName, opts.Subfolder)
 	expected := NoContent
 	content, err := os.ReadFile(refFileName)
