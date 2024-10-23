@@ -10,8 +10,8 @@ const (
 	CategoryMessage
 )
 
-func (c Category) Name() string {
-	switch c {
+func (category Category) Name() string {
+	switch category {
 	case CategoryWarning:
 		return "warning"
 	case CategoryError:
