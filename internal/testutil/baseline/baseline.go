@@ -52,11 +52,10 @@ func writeComparison(actual string, relativeFileName string, opts BaselineOption
 			}
 		}
 
-		if _, err := os.Stat(referenceFileName); err == nil {
-			return fmt.Errorf("New baseline created at %s.", localFileName)
-		} else {
+		if _, err := os.Stat(referenceFileName); err != nil {
 			return fmt.Errorf("The baseline file %s has changed. (Run `hereby baseline-accept` if the new baseline is correct.)", relativeFileName)
 		}
+		return fmt.Errorf("New baseline created at %s.", localFileName)
 	}
 	return nil
 }
