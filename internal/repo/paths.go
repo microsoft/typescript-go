@@ -1,23 +1,23 @@
 package repo
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
-var RepositoryRootPath string
+var RootPath string
 var TypeScriptSubmodulePath string
 var TestDataPath string
 
 func init() {
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(fmt.Sprintf("failed to get current working directory: %v", err))
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("could not get current filename")
 	}
-	RepositoryRootPath = findGoMod(cwd)
-	TypeScriptSubmodulePath = filepath.Join(RepositoryRootPath, "_submodules", "TypeScript")
-	TestDataPath = filepath.Join(RepositoryRootPath, "testdata")
+	RootPath = findGoMod(filepath.Dir(filename))
+	TypeScriptSubmodulePath = filepath.Join(RootPath, "_submodules", "TypeScript")
+	TestDataPath = filepath.Join(RootPath, "testdata")
 }
 
 func findGoMod(dir string) string {

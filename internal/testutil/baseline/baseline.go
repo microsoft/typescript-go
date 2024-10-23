@@ -12,11 +12,7 @@ type BaselineOptions struct {
 	Subfolder string
 }
 
-var NoContent string
-
-func init() {
-	NoContent = "<no content>"
-}
+const NoContent = "<no content>"
 
 func RunBaseline(fileName string, actual string, opts ...BaselineOptions) error {
 	if len(opts) > 1 {
