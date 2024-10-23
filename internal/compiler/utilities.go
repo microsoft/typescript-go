@@ -37,7 +37,7 @@ func (t TextRange) End() int {
 	return int(t.end)
 }
 
-func (t TextRange) Len() int {
+func (t TextRange) Length() int {
 	return int(t.end - t.pos)
 }
 
@@ -127,6 +127,9 @@ type MessageChain struct {
 }
 
 func (d *Diagnostic) File() *SourceFile                 { return d.file }
+func (d *Diagnostic) Pos() int                          { return d.loc.Pos() }
+func (d *Diagnostic) End() int                          { return d.loc.End() }
+func (d *Diagnostic) Length() int                       { return d.loc.Length() }
 func (d *Diagnostic) Loc() TextRange                    { return d.loc }
 func (d *Diagnostic) Code() int32                       { return d.code }
 func (d *Diagnostic) Category() diagnostics.Category    { return d.category }
@@ -162,6 +165,20 @@ func NewDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any)
 func addRelatedInfo(diagnostic *Diagnostic, relatedInformation ...*Diagnostic) *Diagnostic {
 	diagnostic.relatedInformation = append(diagnostic.relatedInformation, relatedInformation...)
 	return diagnostic
+}
+
+func DiagnosticCategoryName(category diagnostics.Category) string {
+	switch category {
+	case diagnostics.CategoryWarning:
+		return "warning"
+	case diagnostics.CategoryError:
+		return "error"
+	case diagnostics.CategorySuggestion:
+		return "suggestion"
+	case diagnostics.CategoryMessage:
+		return "message"
+	}
+	panic("Unhandled diagnostic category")
 }
 
 type OperatorPrecedence int
@@ -3133,6 +3150,17 @@ func pathIsRelative(path string) bool {
 
 func extensionIsTs(ext string) bool {
 	return ext == ExtensionTs || ext == ExtensionTsx || ext == ExtensionDts || ext == ExtensionMts || ext == ExtensionDmts || ext == ExtensionCts || ext == ExtensionDcts || len(ext) >= 7 && ext[:3] == ".d." && ext[len(ext)-3:] == ".ts"
+}
+
+func ConvertToRelativePath(absoluteOrRelativePath, basePath string, getCanonicalFileName func(fileName string) string) string {
+	/// !!!
+	/// May have some differences with original.
+	resolvedRelativePath, err := filepath.Rel(basePath, getCanonicalFileName(absoluteOrRelativePath))
+
+	if err != nil {
+		return absoluteOrRelativePath
+	}
+	return resolvedRelativePath
 }
 
 func isShorthandAmbientModuleSymbol(moduleSymbol *Symbol) bool {

@@ -4,9 +4,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
 	"time"
+	"unicode"
 
 	ts "github.com/microsoft/typescript-go/internal/compiler"
 )
@@ -15,6 +17,7 @@ var quiet = false
 var singleThreaded = false
 var parseAndBindOnly = false
 var printTypes = false
+var pretty = true
 
 func printDiagnostic(d *ts.Diagnostic, level int) {
 	file := d.File()
@@ -34,9 +37,14 @@ func main() {
 	flag.BoolVar(&singleThreaded, "s", false, "Single threaded")
 	flag.BoolVar(&parseAndBindOnly, "p", false, "Parse and bind only")
 	flag.BoolVar(&printTypes, "t", false, "Print type aliases defined in main.ts")
+	flag.BoolVar(&pretty, "pretty", true, "Get prettier errors")
 	flag.Parse()
+
+	rootPath := flag.Arg(0)
 	compilerOptions := &ts.CompilerOptions{Strict: ts.TSTrue, Target: ts.ScriptTargetESNext, ModuleKind: ts.ModuleKindNodeNext}
-	programOptions := ts.ProgramOptions{RootPath: flag.Arg(0), Options: compilerOptions, SingleThreaded: singleThreaded}
+	programOptions := ts.ProgramOptions{RootPath: rootPath, Options: compilerOptions, SingleThreaded: singleThreaded}
+	useCaseSensitiveFileNames := isFileSystemCaseSensitive()
+
 	startTime := time.Now()
 	program := ts.NewProgram(programOptions)
 	diagnostics := program.GetSyntacticDiagnostics(nil)
@@ -53,8 +61,25 @@ func main() {
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
 	if !quiet {
-		for _, diagnostic := range diagnostics {
-			printDiagnostic(diagnostic, 0)
+		if pretty {
+			var getCanonicalFileName func(path string) string
+			if useCaseSensitiveFileNames {
+				getCanonicalFileName = func(path string) string {
+					return path
+				}
+			} else {
+				getCanonicalFileName = strings.ToLower
+			}
+			output := ts.FormatDiagnosticsWithColorAndContext(diagnostics, &ts.DiagnosticsFormattingOptions{
+				NewLine:              "\n",
+				CurrentDirectory:     rootPath,
+				GetCanonicalFileName: getCanonicalFileName,
+			})
+			fmt.Println(output)
+		} else {
+			for _, diagnostic := range diagnostics {
+				printDiagnostic(diagnostic, 0)
+			}
 		}
 	}
 	if printTypes {
@@ -63,4 +88,31 @@ func main() {
 	fmt.Printf("Files:         %v\n", len(program.SourceFiles()))
 	fmt.Printf("Compile time:  %v\n", compileTime)
 	fmt.Printf("Memory used:   %vK\n", memStats.Alloc/1024)
+}
+
+func isFileSystemCaseSensitive() bool {
+	// win32/win64 are case insensitive platforms
+	if runtime.GOOS == "windows" {
+		return false
+	}
+
+	// If the current executable exists under a different case, we must be case-insensitve.
+	if _, err := os.Stat(swapCase(os.Args[0])); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+// Convert all lowercase chars to uppercase, and vice-versa
+func swapCase(str string) string {
+	runes := make([]rune, len(str))
+	for i, c := range str {
+		upper := unicode.ToUpper(c)
+		if upper == c {
+			runes[i] = unicode.ToLower(c)
+		} else {
+			runes[i] = upper
+		}
+	}
+	return string(runes)
 }

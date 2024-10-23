@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
+	"unicode"
+
+	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 )
 
 type ProgramOptions struct {
@@ -388,4 +392,195 @@ func (p *Program) collectModuleReferences(file *SourceFile, node *Statement, inA
 			}
 		}
 	}
+}
+
+type DiagnosticsFormattingOptions struct {
+	CurrentDirectory     string
+	NewLine              string
+	GetCanonicalFileName func(fileName string) string
+}
+
+const (
+	foregroundColorEscapeGrey   = "\u001b[90m"
+	foregroundColorEscapeRed    = "\u001b[91m"
+	foregroundColorEscapeYellow = "\u001b[93m"
+	foregroundColorEscapeBlue   = "\u001b[94m"
+	foregroundColorEscapeCyan   = "\u001b[96m"
+)
+
+const (
+	gutterStyleSequence = "\u001b[7m"
+	gutterSeparator     = " "
+	resetEscapeSequence = "\u001b[0m"
+	ellipsis            = "..."
+	halfIndent          = "  "
+	indent              = "    "
+)
+
+func FormatDiagnosticsWithColorAndContext(diags []*Diagnostic, formatOpts *DiagnosticsFormattingOptions) string {
+	if len(diags) == 0 {
+		return ""
+	}
+
+	var output strings.Builder
+
+	for _, diagnostic := range diags {
+		if diagnostic.file != nil {
+			file := diagnostic.file
+			pos := diagnostic.loc.Pos()
+			writeLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
+			output.WriteString(" - ")
+		}
+
+		writeWithStyleAndReset(&output, DiagnosticCategoryName(diagnostic.Category()), getCategoryFormat(diagnostic.Category()))
+		fmt.Fprintf(&output, "%s TS%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
+		WriteFlattenedDiagnosticMessage(&output, diagnostic, formatOpts.NewLine, 0 /*indent*/)
+
+		if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
+			output.WriteString(formatOpts.NewLine)
+			writeCodeSnippet(&output, diagnostic.File(), diagnostic.Pos(), diagnostic.Length(), getCategoryFormat(diagnostic.Category()), formatOpts)
+		}
+
+		if (diagnostic.RelatedInformation() != nil) && (len(diagnostic.RelatedInformation()) > 0) {
+			output.WriteString(formatOpts.NewLine)
+			for _, relatedInformation := range diagnostic.RelatedInformation() {
+				file := relatedInformation.File()
+				if file != nil {
+					output.WriteString(formatOpts.NewLine)
+					pos := relatedInformation.Pos()
+					writeLocation(&output, file, pos, formatOpts, writeWithStyleAndReset)
+					writeCodeSnippet(&output, file, pos, relatedInformation.Length(), foregroundColorEscapeCyan, formatOpts)
+				}
+
+				output.WriteString(formatOpts.NewLine)
+				WriteFlattenedDiagnosticMessage(&output, relatedInformation, formatOpts.NewLine, 0 /*indent*/)
+			}
+		}
+	}
+
+	return output.String()
+}
+
+func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int, length int, squiggleColor string, formatOpts *DiagnosticsFormattingOptions) {
+	firstLine, firstLineChar := GetLineAndCharacterOfPosition(sourceFile, start)
+	lastLine, lastLineChar := GetLineAndCharacterOfPosition(sourceFile, start+length)
+
+	lastLineOfFile, _ := GetLineAndCharacterOfPosition(sourceFile, len(sourceFile.text))
+
+	hasMoreThanFiveLines := lastLine-firstLine >= 4
+	gutterWidth := len(strconv.Itoa(lastLineOfFile + 1))
+
+	for i := firstLine; i <= lastLine; i++ {
+		writer.WriteString(formatOpts.NewLine)
+
+		// If the error spans over 5 lines, we'll only show the first 2 and last 2 lines,
+		// so we'll skip ahead to the second-to-last line.
+		if hasMoreThanFiveLines && firstLine+1 < i && i < lastLine-1 {
+			writer.WriteString(gutterStyleSequence)
+			fmt.Fprintf(writer, "%*s", gutterWidth, ellipsis)
+			writer.WriteString(resetEscapeSequence)
+			writer.WriteString(gutterSeparator)
+			writer.WriteString(formatOpts.NewLine)
+			i = lastLine - 1
+		}
+
+		lineStart := GetPositionOfLineAndCharacter(sourceFile, i, 0)
+		lineEnd := sourceFile.loc.end
+		if i < lastLineOfFile {
+			lineEnd = GetPositionOfLineAndCharacter(sourceFile, i+1, 0)
+		}
+		lineContent := strings.TrimRightFunc(sourceFile.text[lineStart:lineEnd], unicode.IsSpace) // trim from end
+		lineContent = strings.ReplaceAll(lineContent, "\t", " ")                                  // convert tabs to single spaces
+
+		// Output the gutter and the actual contents of the line.
+		writer.WriteString(gutterStyleSequence)
+		fmt.Fprintf(writer, "%*d", gutterWidth, i+1)
+		writer.WriteString(resetEscapeSequence)
+		writer.WriteString(gutterSeparator)
+		writer.WriteString(lineContent)
+		writer.WriteString(formatOpts.NewLine)
+
+		// Output the gutter and the error span for the line using tildes.
+		writer.WriteString(gutterStyleSequence)
+		fmt.Fprintf(writer, "%*s", gutterWidth, "")
+		writer.WriteString(resetEscapeSequence)
+		writer.WriteString(gutterSeparator)
+		writer.WriteString(squiggleColor)
+		if i == firstLine {
+			// If we're on the last line, then limit it to the last character of the last line.
+			// Otherwise, we'll just squiggle the rest of the line, giving 'slice' no end position.
+			lastCharForLine := ifElse(i == lastLine, lastLineChar, len(lineContent))
+
+			// Fill with spaces until the first character,
+			// then squiggle the remainder of the line.
+			writer.WriteString(strings.Repeat(" ", firstLineChar))
+			writer.WriteString(strings.Repeat("~", lastCharForLine-firstLineChar))
+		} else if i == lastLine {
+			// Squiggle until the final character.
+			writer.WriteString(strings.Repeat("~", lastLineChar))
+		} else {
+			// Squiggle the entire line.
+			writer.WriteString(strings.Repeat("~", len(lineContent)))
+		}
+
+		writer.WriteString(resetEscapeSequence)
+	}
+}
+
+func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *Diagnostic, newline string, level int) {
+	writer.WriteString(diagnostic.Message())
+
+	for _, chain := range diagnostic.messageChain {
+		flattenDiagnosticMessageChain(writer, chain, newline, level+1)
+	}
+}
+
+func flattenDiagnosticMessageChain(writer *strings.Builder, chain *MessageChain, newline string, level int) {
+	writer.WriteString(newline)
+	for i := 0; i < level; i++ {
+		writer.WriteString("  ")
+	}
+
+	writer.WriteString(chain.message)
+	for _, child := range chain.messageChain {
+		flattenDiagnosticMessageChain(writer, child, newline, level+1)
+	}
+}
+
+func getCategoryFormat(category diagnostics.Category) string {
+	switch category {
+	case diagnostics.CategoryError:
+		return foregroundColorEscapeRed
+	case diagnostics.CategoryWarning:
+		return foregroundColorEscapeYellow
+	case diagnostics.CategorySuggestion:
+		return foregroundColorEscapeGrey
+	case diagnostics.CategoryMessage:
+		return foregroundColorEscapeBlue
+	}
+	panic("Unhandled diagnostic category")
+}
+
+type FormattedWriter func(output *strings.Builder, text string, formatStyle string)
+
+func writeWithStyleAndReset(output *strings.Builder, text string, formatStyle string) {
+	output.WriteString(formatStyle)
+	output.WriteString(text)
+	output.WriteString(resetEscapeSequence)
+}
+
+func writeLocation(output *strings.Builder, file *SourceFile, pos int, formatOpts *DiagnosticsFormattingOptions, writeWithStyleAndReset FormattedWriter) {
+	firstLine, firstChar := GetLineAndCharacterOfPosition(file, pos)
+	var relativeFileName string
+	if formatOpts != nil {
+		relativeFileName = ConvertToRelativePath(file.path, formatOpts.CurrentDirectory, formatOpts.GetCanonicalFileName)
+	} else {
+		relativeFileName = file.path
+	}
+
+	writeWithStyleAndReset(output, relativeFileName, foregroundColorEscapeCyan)
+	output.WriteRune(':')
+	writeWithStyleAndReset(output, strconv.Itoa(firstLine+1), foregroundColorEscapeYellow)
+	output.WriteRune(':')
+	writeWithStyleAndReset(output, strconv.Itoa(firstChar+1), foregroundColorEscapeYellow)
 }
