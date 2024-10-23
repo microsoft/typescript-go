@@ -63,6 +63,9 @@ func printAST(t *testing.T, sourceRoot string, targetRoot string, sourceFile *So
 			indent := strings.Repeat("  ", indentation)
 			fmt.Fprintf(file, "%s%s: '%s'\n", indent, skind, sourceFile.text[node.loc.pos:node.loc.end])
 		default:
+			if isOmittedExpression(node) {
+				skind = "OmittedExpression"
+			}
 			indent := strings.Repeat("  ", indentation)
 			fmt.Fprintf(file, "%s%s\n", indent, skind)
 		}
@@ -73,4 +76,16 @@ func printAST(t *testing.T, sourceRoot string, targetRoot string, sourceFile *So
 		})
 	}
 	visit(sourceFile.AsNode(), 0)
+}
+
+func isOmittedExpression(node *Node) bool {
+	if node.kind == SyntaxKindBindingElement {
+		b := node.AsBindingElement()
+		if b.initializer == nil && b.name == nil && b.dotDotDotToken == nil {
+			return true
+		}
+	} else {
+		return false
+	}
+	return false
 }
