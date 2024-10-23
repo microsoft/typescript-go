@@ -57,6 +57,7 @@ export const test = task({
     run: async () => {
         assertTypeScriptCloned();
         await $`go test ${options.race ? ["-race"] : []} ./...`;
+        // Run the benchmarks once to ensure they compile and run without errors.
         await $`go test ${options.race ? ["-race"] : []} -run=- -bench=. -benchtime=1x ./...`;
     },
 });
