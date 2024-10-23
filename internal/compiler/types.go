@@ -788,6 +788,14 @@ type ExportTypeLinks struct {
 	originatingImport *Node   // Import declaration which produced the symbol, present if the symbol is marked as uncallable but had call signatures in `resolveESModuleSymbol`
 }
 
+// Links for type aliases
+
+type TypeAliasLinks struct {
+	declaredType   *Type
+	typeParameters []*Type          // Type parameters of type alias (undefined if non-generic)
+	instantiations map[string]*Type // Instantiations of generic type alias (undefined if non-generic)
+}
+
 // Links for late-binding containers
 
 type MembersOrExportsResolutionKind int
@@ -963,6 +971,7 @@ type CompilerOptions struct {
 	NoImplicitAny                Tristate
 	PreserveConstEnums           Tristate
 	Strict                       Tristate
+	StrictBindCallApply          Tristate
 	StrictNullChecks             Tristate
 	Target                       ScriptTarget
 	TraceResolution              Tristate
@@ -1284,46 +1293,66 @@ type Type struct {
 
 // Casts for concrete struct types
 
-func (t *Type) IntrinsicType() *IntrinsicTypeData           { return t.data.(*IntrinsicTypeData) }
-func (t *Type) LiteralType() *LiteralTypeData               { return t.data.(*LiteralTypeData) }
-func (t *Type) UniqueESSymbolType() *UniqueESSymbolTypeData { return t.data.(*UniqueESSymbolTypeData) }
-func (t *Type) InterfaceType() *InterfaceTypeData           { return t.data.(*InterfaceTypeData) }
-func (t *Type) TypeReference() *TypeReferenceData           { return t.data.(*TypeReferenceData) }
-func (t *Type) AnonymousType() *AnonymousTypeData           { return t.data.(*AnonymousTypeData) }
-func (t *Type) TypeParameter() *TypeParameterData           { return t.data.(*TypeParameterData) }
-func (t *Type) UnionType() *UnionTypeData                   { return t.data.(*UnionTypeData) }
-func (t *Type) IntersectionType() *IntersectionTypeData     { return t.data.(*IntersectionTypeData) }
-func (t *Type) IndexedAccessType() *IndexedAccessTypeData   { return t.data.(*IndexedAccessTypeData) }
+func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
+func (t *Type) AsLiteralType() *LiteralType                 { return t.data.(*LiteralType) }
+func (t *Type) AsUniqueESSymbolType() *UniqueESSymbolType   { return t.data.(*UniqueESSymbolType) }
+func (t *Type) AsInterfaceType() *InterfaceType             { return t.data.(*InterfaceType) }
+func (t *Type) AsTypeReference() *TypeReference             { return t.data.(*TypeReference) }
+func (t *Type) AsAnonymousType() *AnonymousType             { return t.data.(*AnonymousType) }
+func (t *Type) AsTypeParameter() *TypeParameter             { return t.data.(*TypeParameter) }
+func (t *Type) AsUnionType() *UnionType                     { return t.data.(*UnionType) }
+func (t *Type) AsIntersectionType() *IntersectionType       { return t.data.(*IntersectionType) }
+func (t *Type) AsIndexedAccessType() *IndexedAccessType     { return t.data.(*IndexedAccessType) }
+func (t *Type) AsTemplateLiteralType() *TemplateLiteralType { return t.data.(*TemplateLiteralType) }
+func (t *Type) AsStringMappingType() *StringMappingType     { return t.data.(*StringMappingType) }
 
 // Casts for embedded struct types
 
-func (t *Type) ObjectType() *ObjectTypeBase               { return t.data.ObjectType() }
-func (t *Type) ParameterizedType() *ParameterizedTypeBase { return t.data.ParameterizedType() }
+func (t *Type) AsObjectType() *ObjectType               { return t.data.AsObjectType() }
+func (t *Type) AsParameterizedType() *ParameterizedType { return t.data.AsParameterizedType() }
+func (t *Type) AsUnionOrIntersectionType() *UnionOrIntersectionType {
+	return t.data.AsUnionOrIntersectionType()
+}
+
+// Common accessors
+
+func (t *Type) TargetInterfaceType() *InterfaceType {
+	return t.AsTypeReference().target.AsInterfaceType()
+}
+
+func (t *Type) String() string {
+	return "*Type*"
+}
 
 // TypeData
 
 type TypeData interface {
-	ObjectType() *ObjectTypeBase
-	ParameterizedType() *ParameterizedTypeBase
+	AsType() *Type
+	AsObjectType() *ObjectType
+	AsParameterizedType() *ParameterizedType
+	AsUnionOrIntersectionType() *UnionOrIntersectionType
 }
 
 // TypeBase
 
-type TypeBase struct{}
+type TypeBase struct {
+	Type
+}
 
-func (data *TypeBase) ObjectType() *ObjectTypeBase               { return nil }
-func (data *TypeBase) ParameterizedType() *ParameterizedTypeBase { return nil }
+func (t *TypeBase) AsType() *Type                           { return &t.Type }
+func (t *TypeBase) AsObjectType() *ObjectType               { return nil }
+func (t *TypeBase) AsParameterizedType() *ParameterizedType { return nil }
 
 // IntrinsicTypeData
 
-type IntrinsicTypeData struct {
+type IntrinsicType struct {
 	TypeBase
 	intrinsicName string
 }
 
 // LiteralTypeData
 
-type LiteralTypeData struct {
+type LiteralType struct {
 	TypeBase
 	value       any   // string | float64 | bool | PseudoBigInt | nil (computed enum)
 	freshType   *Type // Fresh version of type
@@ -1337,14 +1366,14 @@ type PseudoBigint struct {
 
 // UniqueESSymbolTypeData
 
-type UniqueESSymbolTypeData struct {
+type UniqueESSymbolType struct {
 	TypeBase
 	name string
 }
 
 // ObjectTypeBase
 
-type ObjectTypeBase struct {
+type ObjectType struct {
 	TypeBase
 	members             SymbolTable
 	properties          []*Symbol
@@ -1353,12 +1382,12 @@ type ObjectTypeBase struct {
 	indexInfos          []*IndexInfo
 }
 
-func (data *ObjectTypeBase) ObjectType() *ObjectTypeBase { return data }
+func (t *ObjectType) AsObjectType() *ObjectType { return t }
 
 // InstantiatedTypeData
 
-type InstantiatedTypeBase struct {
-	ObjectTypeBase
+type InstantiatedType struct {
+	ObjectType
 	target         *Type            // Target of instantiated type
 	mapper         TypeMapper       // Type mapper for instantiated type
 	instantiations map[string]*Type // Map of type instantiations
@@ -1366,17 +1395,17 @@ type InstantiatedTypeBase struct {
 
 // ParameterizedTypeData
 
-type ParameterizedTypeBase struct {
-	InstantiatedTypeBase
+type ParameterizedType struct {
+	InstantiatedType
 	resolvedTypeArguments []*Type
 }
 
-func (data *ParameterizedTypeBase) ParameterizedType() *ParameterizedTypeBase { return data }
+func (t *ParameterizedType) AsParameterizedType() *ParameterizedType { return t }
 
 // InterfaceType (when generic, serves as reference to instantiation of itself)
 
-type InterfaceTypeData struct {
-	ParameterizedTypeBase
+type InterfaceType struct {
+	ParameterizedType
 	typeParameters              []*Type // Type parameters
 	outerTypeParameters         []*Type // Outer type parameters
 	localTypeParameters         []*Type // Local type parameters
@@ -1386,32 +1415,57 @@ type InterfaceTypeData struct {
 	declaredMembersResolved     bool
 	resolvedBaseConstructorType *Type
 	resolvedBaseTypes           []*Type
+	declaredMembers             SymbolTable  // Declared members
 	declaredCallSignatures      []*Signature // Declared call signatures
 	declaredConstructSignatures []*Signature // Declared construct signatures
 	declaredIndexInfos          []*IndexInfo // Declared index signatures
-	tupleInfo                   *TupleInfo   // Additional data for tuple types
+	tupleData                   *TupleData   // Additional data for tuple types
 }
 
-type TupleInfo struct {
+type ElementFlags uint32
+
+const (
+	ElementFlagsNone        ElementFlags = 0
+	ElementFlagsRequired    ElementFlags = 1 << 0 // T
+	ElementFlagsOptional    ElementFlags = 1 << 1 // T?
+	ElementFlagsRest        ElementFlags = 1 << 2 // ...T[]
+	ElementFlagsVariadic    ElementFlags = 1 << 3 // ...T
+	ElementFlagsFixed                    = ElementFlagsRequired | ElementFlagsOptional
+	ElementFlagsVariable                 = ElementFlagsRest | ElementFlagsVariadic
+	ElementFlagsNonRequired              = ElementFlagsOptional | ElementFlagsRest | ElementFlagsVariadic
+	ElementFlagsNonRest                  = ElementFlagsRequired | ElementFlagsOptional | ElementFlagsVariadic
+)
+
+type TupleElementInfo struct {
+	flags              ElementFlags
+	labeledDeclaration *Node // NamedTupleMember | ParameterDeclaration | nil
+}
+
+type TupleData struct {
+	elementInfos  []TupleElementInfo
+	minLength     int // Number of required or variadic elements
+	fixedLength   int // Number of initial required or optional elements
+	combinedFlags ElementFlags
+	readonly      bool
 }
 
 // TypeReference (instantiation of a generic type)
 
-type TypeReferenceData struct {
-	ParameterizedTypeBase
+type TypeReference struct {
+	ParameterizedType
 	node *Node // TypeReferenceNode | ArrayTypeNode | TupleTypeNode | nil
 }
 
 // AnonymousType
 
-type AnonymousTypeData struct {
-	InstantiatedTypeBase
+type AnonymousType struct {
+	InstantiatedType
 }
 
 // MappedType
 
-type MappedTypeData struct {
-	InstantiatedTypeBase
+type MappedType struct {
+	InstantiatedType
 	declaration          MappedTypeNode
 	typeParameter        *Type
 	constraintType       *Type
@@ -1424,8 +1478,8 @@ type MappedTypeData struct {
 
 // ReverseMappedType
 
-type ReverseMappedTypeData struct {
-	ObjectTypeBase
+type ReverseMappedType struct {
+	ObjectType
 	source         *Type
 	mappedType     *Type
 	constraintType *Type
@@ -1433,8 +1487,8 @@ type ReverseMappedTypeData struct {
 
 // UnionOrIntersectionTypeData
 
-type UnionOrIntersectionTypeBase struct {
-	ObjectTypeBase
+type UnionOrIntersectionType struct {
+	ObjectType
 	types                                       []*Type
 	propertyCache                               SymbolTable
 	propertyCacheWithoutFunctionPropertyAugment SymbolTable
@@ -1442,10 +1496,12 @@ type UnionOrIntersectionTypeBase struct {
 	resolvedBaseConstraint                      *Type
 }
 
+func (t *UnionOrIntersectionType) AsUnionOrIntersectionType() *UnionOrIntersectionType { return t }
+
 // UnionType
 
-type UnionTypeData struct {
-	UnionOrIntersectionTypeBase
+type UnionType struct {
+	UnionOrIntersectionType
 	resolvedReducedType *Type
 	regularType         *Type
 	origin              *Type            // Denormalized union, intersection, or index type in which union originates
@@ -1455,14 +1511,14 @@ type UnionTypeData struct {
 
 // IntersectionType
 
-type IntersectionTypeData struct {
-	UnionOrIntersectionTypeBase
+type IntersectionType struct {
+	UnionOrIntersectionType
 	resolvedApparentType *Type
 }
 
 // TypeParameter
 
-type TypeParameterData struct {
+type TypeParameter struct {
 	TypeBase
 	constraint          *Type
 	target              *Type
@@ -1473,11 +1529,22 @@ type TypeParameterData struct {
 
 // IndexedAccessType
 
-type IndexedAccessTypeData struct {
+type IndexedAccessType struct {
 	TypeBase
 	objectType  *Type
 	indexType   *Type
 	accessFlags AccessFlags // Only includes AccessFlags.Persistent
+}
+
+type TemplateLiteralType struct {
+	TypeBase
+	texts []string // Always one element longer than types
+	types []*Type  // Always at least one element
+}
+
+type StringMappingType struct {
+	TypeBase
+	target *Type
 }
 
 // TypeMapper
@@ -1489,7 +1556,15 @@ type TypeMapper interface {
 // Signature
 
 type Signature struct {
-	// !!!
+	flags              SignatureFlags
+	declaration        *Node
+	typeParameters     []*Type
+	parameters         []*Symbol
+	thisParameter      *Symbol
+	resolvedReturnType *Type
+	target             *Signature
+	mapper             TypeMapper
+	instantiations     map[string]*Signature
 }
 
 // IndexInfo
