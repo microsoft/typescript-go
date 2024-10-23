@@ -5312,18 +5312,18 @@ func (c *Checker) setStructuredTypeMembers(t *Type, members SymbolTable, callSig
 		if len(constructSignatures) != 0 {
 			data.signatures = concatenate(callSignatures, constructSignatures)
 		} else {
-			data.signatures = callSignatures[0:len(callSignatures):len(callSignatures)]
+			data.signatures = slices.Clip(callSignatures)
 		}
 		data.callSignatureCount = len(callSignatures)
 	} else {
 		if len(constructSignatures) != 0 {
-			data.signatures = constructSignatures[0:len(constructSignatures):len(constructSignatures)]
+			data.signatures = slices.Clip(constructSignatures)
 		} else {
 			data.signatures = nil
 		}
 		data.callSignatureCount = 0
 	}
-	data.indexInfos = indexInfos[0:len(indexInfos):len(indexInfos)]
+	data.indexInfos = slices.Clip(indexInfos)
 }
 
 func (c *Checker) newInterfaceType(objectFlags ObjectFlags, symbol *Symbol) *Type {
