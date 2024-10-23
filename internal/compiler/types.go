@@ -1,5 +1,7 @@
 package compiler
 
+import "slices"
+
 //go:generate go run golang.org/x/tools/cmd/stringer -type=SyntaxKind,SignatureKind,ScriptKind,ScriptTarget,LanguageVariant,Tristate -output=stringer_generated.go
 
 type SyntaxKind int16
@@ -1385,11 +1387,11 @@ type ObjectType struct {
 func (t *ObjectType) AsObjectType() *ObjectType { return t }
 
 func (t *ObjectType) CallSignatures() []*Signature {
-	return t.signatures[0:t.callSignatureCount:t.callSignatureCount]
+	return slices.Clip(t.signatures[:t.callSignatureCount])
 }
 
 func (t *ObjectType) ConstructSignatures() []*Signature {
-	return t.signatures[t.callSignatureCount:len(t.signatures):len(t.signatures)]
+	return slices.Clip(t.signatures[t.callSignatureCount:])
 }
 
 // InstantiatedTypeData
@@ -1433,21 +1435,21 @@ func (t *InterfaceType) OuterTypeParameters() []*Type {
 	if len(t.allTypeParameters) == 0 {
 		return nil
 	}
-	return t.allTypeParameters[:t.outerTypeParameterCount:t.outerTypeParameterCount]
+	return slices.Clip(t.allTypeParameters[:t.outerTypeParameterCount])
 }
 
 func (t *InterfaceType) LocalTypeParameters() []*Type {
 	if len(t.allTypeParameters) == 0 {
 		return nil
 	}
-	return t.allTypeParameters[t.outerTypeParameterCount : len(t.allTypeParameters)-1 : len(t.allTypeParameters)-1]
+	return slices.Clip(t.allTypeParameters[t.outerTypeParameterCount : len(t.allTypeParameters)-1])
 }
 
 func (t *InterfaceType) TypeParameters() []*Type {
 	if len(t.allTypeParameters) == 0 {
 		return nil
 	}
-	return t.allTypeParameters[: len(t.allTypeParameters)-1 : len(t.allTypeParameters)-1]
+	return slices.Clip(t.allTypeParameters[:len(t.allTypeParameters)-1])
 }
 
 type ElementFlags uint32

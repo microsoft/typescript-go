@@ -3714,17 +3714,17 @@ func isLogicalExpression(node *Node) bool {
 	}
 }
 
-type OrderedMap[K comparable, V any] struct {
+type orderedMap[K comparable, V any] struct {
 	valuesByKey map[K]V
 	values      []V
 }
 
-func (m *OrderedMap[K, V]) contains(key K) bool {
+func (m *orderedMap[K, V]) contains(key K) bool {
 	_, ok := m.valuesByKey[key]
 	return ok
 }
 
-func (m *OrderedMap[K, V]) add(key K, value V) {
+func (m *orderedMap[K, V]) add(key K, value V) {
 	if m.valuesByKey == nil {
 		m.valuesByKey = make(map[K]V)
 	}

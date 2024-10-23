@@ -5858,7 +5858,7 @@ func (c *Checker) getIntersectionType(types []*Type) *Type {
 }
 
 func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, alias *TypeAlias) *Type {
-	var orderedTypes OrderedMap[TypeId, *Type]
+	var orderedTypes orderedMap[TypeId, *Type]
 	includes := c.addTypesToIntersection(&orderedTypes, 0, types)
 	typeSet := orderedTypes.values
 	objectFlags := ObjectFlagsNone
@@ -6046,14 +6046,14 @@ func isNotNullType(t *Type) bool {
 
 // Add the given types to the given type set. Order is preserved, freshness is removed from literal
 // types, duplicates are removed, and nested types of the given kind are flattened into the set.
-func (c *Checker) addTypesToIntersection(typeSet *OrderedMap[TypeId, *Type], includes TypeFlags, types []*Type) TypeFlags {
+func (c *Checker) addTypesToIntersection(typeSet *orderedMap[TypeId, *Type], includes TypeFlags, types []*Type) TypeFlags {
 	for _, t := range types {
 		includes = c.addTypeToIntersection(typeSet, includes, c.getRegularTypeOfLiteralType(t))
 	}
 	return includes
 }
 
-func (c *Checker) addTypeToIntersection(typeSet *OrderedMap[TypeId, *Type], includes TypeFlags, t *Type) TypeFlags {
+func (c *Checker) addTypeToIntersection(typeSet *orderedMap[TypeId, *Type], includes TypeFlags, t *Type) TypeFlags {
 	flags := t.flags
 	if flags&TypeFlagsIntersection != 0 {
 		return c.addTypesToIntersection(typeSet, includes, t.AsIntersectionType().types)
