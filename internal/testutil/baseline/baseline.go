@@ -34,14 +34,22 @@ func writeComparison(actual string, relativeFileName string, opts BaselineOption
 	referenceFileName := referencePath(relativeFileName, opts.Subfolder)
 	expected := getExpectedContent(relativeFileName, opts)
 	if _, err := os.Stat(localFileName); err == nil {
-		os.Remove(localFileName)
+		if err := os.Remove(localFileName); err != nil {
+			return err
+		}
 	}
 	if actual != expected {
-		os.MkdirAll(filepath.Dir(localFileName), 0755)
+		if err := os.MkdirAll(filepath.Dir(localFileName), 0755); err != nil {
+			return err
+		}
 		if actual == NoContent {
-			os.WriteFile(localFileName+".delete", []byte{}, 0644)
+			if err := os.WriteFile(localFileName+".delete", []byte{}, 0644); err != nil {
+				return err
+			}
 		} else {
-			os.WriteFile(localFileName, []byte(actual), 0644)
+			if err := os.WriteFile(localFileName, []byte(actual), 0644); err != nil {
+				return err
+			}
 		}
 
 		if _, err := os.Stat(referenceFileName); err == nil {
