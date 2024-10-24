@@ -432,7 +432,7 @@ func FormatDiagnosticsWithColorAndContext(diags []*Diagnostic, formatOpts *Diagn
 
 		writeWithStyleAndReset(&output, diagnostic.Category().Name(), getCategoryFormat(diagnostic.Category()))
 		fmt.Fprintf(&output, "%s TS%d: %s", foregroundColorEscapeGrey, diagnostic.Code(), resetEscapeSequence)
-		WriteFlattenedDiagnosticMessage(&output, diagnostic, formatOpts.NewLine, 0 /*indent*/)
+		WriteFlattenedDiagnosticMessage(&output, diagnostic, formatOpts.NewLine)
 
 		if diagnostic.File() != nil && diagnostic.Code() != diagnostics.File_appears_to_be_binary.Code() {
 			output.WriteString(formatOpts.NewLine)
@@ -451,7 +451,7 @@ func FormatDiagnosticsWithColorAndContext(diags []*Diagnostic, formatOpts *Diagn
 				}
 
 				output.WriteString(formatOpts.NewLine)
-				WriteFlattenedDiagnosticMessage(&output, relatedInformation, formatOpts.NewLine, 0 /*indent*/)
+				WriteFlattenedDiagnosticMessage(&output, relatedInformation, formatOpts.NewLine
 			}
 		}
 	}
@@ -525,11 +525,11 @@ func writeCodeSnippet(writer *strings.Builder, sourceFile *SourceFile, start int
 	}
 }
 
-func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *Diagnostic, newline string, level int) {
+func WriteFlattenedDiagnosticMessage(writer *strings.Builder, diagnostic *Diagnostic, newline string) {
 	writer.WriteString(diagnostic.Message())
 
 	for _, chain := range diagnostic.messageChain {
-		flattenDiagnosticMessageChain(writer, chain, newline, level+1)
+		flattenDiagnosticMessageChain(writer, chain, newline, 1 /*level*/)
 	}
 }
 
