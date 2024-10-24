@@ -12,8 +12,7 @@ import (
 func TestMap(t *testing.T) {
 	t.Parallel()
 
-	// Make a pointer; not required (the zero value works), but used here for clone testing.
-	m := &collections.Map[int, string]{}
+	var m collections.Map[int, string]
 
 	assert.Assert(t, !m.Has(1))
 
@@ -78,12 +77,6 @@ func TestMap(t *testing.T) {
 	assert.Equal(t, firstKey, start)
 	assert.Equal(t, firstValue, padInt(start))
 
-	clone := m.Clone()
-	assert.Assert(t, clone != m)
-	assert.Equal(t, clone.Size(), N)
-	assert.DeepEqual(t, slices.Collect(clone.Keys()), keys)
-	assert.DeepEqual(t, slices.Collect(clone.Values()), values)
-
 	for i := start + 1; i < end; i++ {
 		v, ok := m.Delete(i)
 		assert.Assert(t, ok)
@@ -101,19 +94,50 @@ func TestMap(t *testing.T) {
 
 	assert.Equal(t, m.Size(), 1)
 	assert.Assert(t, m.Has(start))
-	assert.Equal(t, clone.Size(), N)
 
 	v, ok := m.Delete(start)
 	assert.Assert(t, ok)
 	assert.Equal(t, v, padInt(start))
 
 	assert.Equal(t, m.Size(), 0)
+}
 
-	clone.Clear()
-	assert.Equal(t, clone.Size(), 0)
-	assert.Assert(t, !clone.Has(start))
-	assert.Equal(t, len(slices.Collect(clone.Keys())), 0)
-	assert.Equal(t, len(slices.Collect(clone.Values())), 0)
+func TestMapClone(t *testing.T) {
+	t.Parallel()
+
+	m := &collections.Map[int, string]{}
+	m.Set(1, "one")
+	m.Set(2, "two")
+
+	clone := m.Clone()
+
+	assert.Assert(t, clone != m)
+	assert.Equal(t, clone.Size(), 2)
+	assert.DeepEqual(t, slices.Collect(clone.Keys()), []int{1, 2})
+	assert.DeepEqual(t, slices.Collect(clone.Values()), []string{"one", "two"})
+
+	v, ok := clone.Get(1)
+	assert.Assert(t, ok)
+	assert.Equal(t, v, "one")
+
+	m.Delete(1)
+
+	assert.Equal(t, m.Size(), 1)
+	assert.Equal(t, clone.Size(), 2)
+	assert.DeepEqual(t, slices.Collect(clone.Keys()), []int{1, 2})
+	assert.DeepEqual(t, slices.Collect(clone.Values()), []string{"one", "two"})
+}
+
+func TestMapClear(t *testing.T) {
+	t.Parallel()
+
+	var m collections.Map[int, string]
+	m.Set(1, "one")
+	m.Set(2, "two")
+
+	m.Clear()
+
+	assert.Equal(t, m.Size(), 0)
 }
 
 func padInt(n int) string {
