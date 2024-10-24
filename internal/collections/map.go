@@ -14,7 +14,12 @@ type Map[K comparable, V any] struct {
 
 // NewMapWithSizeHint creates a new Map with a hint for the number of elements it will contain.
 func NewMapWithSizeHint[K comparable, V any](hint int) *Map[K, V] {
-	return &Map[K, V]{
+	m := newMapWithSizeHint[K, V](hint)
+	return &m
+}
+
+func newMapWithSizeHint[K comparable, V any](hint int) Map[K, V] {
+	return Map[K, V]{
 		keys: make([]K, 0, hint),
 		mp:   make(map[K]V, hint),
 	}
@@ -120,7 +125,12 @@ func (m *Map[K, V]) Size() int {
 
 // Clone returns a copy of the map. Entries are shallow-copied.
 func (m *Map[K, V]) Clone() *Map[K, V] {
-	return &Map[K, V]{
+	m2 := m.clone()
+	return &m2
+}
+
+func (m *Map[K, V]) clone() Map[K, V] {
+	return Map[K, V]{
 		keys: slices.Clone(m.keys),
 		mp:   maps.Clone(m.mp),
 	}
