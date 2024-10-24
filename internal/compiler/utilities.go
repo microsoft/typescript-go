@@ -3138,15 +3138,6 @@ func extensionIsTs(ext string) bool {
 	return ext == ExtensionTs || ext == ExtensionTsx || ext == ExtensionDts || ext == ExtensionMts || ext == ExtensionDmts || ext == ExtensionCts || ext == ExtensionDcts || len(ext) >= 7 && ext[:3] == ".d." && ext[len(ext)-3:] == ".ts"
 }
 
-func ConvertToRelativePath(absoluteOrRelativePath, basePath string, getCanonicalFileName func(fileName string) string) string {
-	/// !!!
-	/// May have some differences with original.
-	if resolvedRelativePath, err := filepath.Rel(basePath, getCanonicalFileName(absoluteOrRelativePath)); err == nil {
-		return resolvedRelativePath
-	}
-	return absoluteOrRelativePath
-}
-
 func isShorthandAmbientModuleSymbol(moduleSymbol *Symbol) bool {
 	return isShorthandAmbientModule(moduleSymbol.valueDeclaration)
 }
