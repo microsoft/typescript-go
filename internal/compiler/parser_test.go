@@ -71,6 +71,10 @@ func printAST(t *testing.T, sourceRoot string, targetRoot string, sourceFile *So
 		}
 		// TODO: Include trivia in a more structured way than GetFullText// Visit child nodes with increased indentation
 		return node.ForEachChild(func(child *Node) bool {
+			if node.kind == SyntaxKindShorthandPropertyAssignment && node.AsShorthandPropertyAssignment().objectAssignmentInitializer == child {
+				indent := strings.Repeat("  ", indentation+offset)
+				fmt.Fprintf(file, "%sEqualsToken\n", indent) // print an extra line for the EqualsToken
+			}
 			visit(child, indentation+offset)
 			return false
 		})
