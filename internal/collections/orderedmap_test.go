@@ -1,11 +1,11 @@
-package orderedmap_test
+package collections_test
 
 import (
 	"fmt"
 	"slices"
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/orderedmap"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"gotest.tools/v3/assert"
 )
 
@@ -13,7 +13,7 @@ func TestMap(t *testing.T) {
 	t.Parallel()
 
 	// Make a pointer; not required (the zero value works), but used here for clone testing.
-	m := &orderedmap.Map[int, string]{}
+	m := &collections.Map[int, string]{}
 
 	assert.Assert(t, !m.Has(1))
 
@@ -124,7 +124,7 @@ func TestMapWithSizeHint(t *testing.T) {
 	const N = 1024
 
 	allocs := testing.AllocsPerRun(10, func() {
-		m := orderedmap.NewMapWithSizeHint[int, int](N)
+		m := collections.NewMapWithSizeHint[int, int](N)
 		for i := range N {
 			m.Set(i, i)
 		}
