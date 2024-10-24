@@ -138,7 +138,7 @@ type Checker struct {
 	globals                            SymbolTable
 	stringLiteralTypes                 map[string]*Type
 	numberLiteralTypes                 map[float64]*Type
-	bigintLiteralTypes                 map[PseudoBigint]*Type
+	bigintLiteralTypes                 map[PseudoBigInt]*Type
 	enumLiteralTypes                   map[EnumLiteralKey]*Type
 	cachedTypes                        map[CachedTypeKey]*Type
 	undefinedSymbol                    *Symbol
@@ -242,7 +242,7 @@ func NewChecker(program *Program) *Checker {
 	c.globals = make(SymbolTable)
 	c.stringLiteralTypes = make(map[string]*Type)
 	c.numberLiteralTypes = make(map[float64]*Type)
-	c.bigintLiteralTypes = make(map[PseudoBigint]*Type)
+	c.bigintLiteralTypes = make(map[PseudoBigInt]*Type)
 	c.enumLiteralTypes = make(map[EnumLiteralKey]*Type)
 	c.cachedTypes = make(map[CachedTypeKey]*Type)
 	c.undefinedSymbol = c.newSymbol(SymbolFlagsProperty, "undefined")
@@ -277,7 +277,7 @@ func NewChecker(program *Program) *Checker {
 	c.nullWideningType = c.createWideningType(c.nullType)
 	c.stringType = c.newIntrinsicType(TypeFlagsString, "string")
 	c.numberType = c.newIntrinsicType(TypeFlagsNumber, "number")
-	c.bigintType = c.newIntrinsicType(TypeFlagsBigint, "bigint")
+	c.bigintType = c.newIntrinsicType(TypeFlagsBigInt, "bigint")
 	c.regularFalseType = c.newLiteralType(TypeFlagsBooleanLiteral, false, nil)
 	c.falseType = c.newLiteralType(TypeFlagsBooleanLiteral, false, c.regularFalseType)
 	c.regularFalseType.AsLiteralType().freshType = c.falseType
@@ -740,7 +740,7 @@ func (c *Checker) checkSourceElementWorker(node *Node) {
 			!(isQualifiedName(node.parent) && node.parent.AsQualifiedName().right == node) {
 			_ = c.checkExpression(node)
 		}
-	case SyntaxKindStringLiteral, SyntaxKindNumericLiteral, SyntaxKindBigintLiteral:
+	case SyntaxKindStringLiteral, SyntaxKindNumericLiteral, SyntaxKindBigIntLiteral:
 		if isExpressionNode(node) {
 			c.checkExpression(node)
 		}
@@ -839,11 +839,11 @@ func (c *Checker) checkExpressionWorker(node *Node, checkMode CheckMode) *Type {
 		// !!! checkGrammarNumericLiteral(node as NumericLiteral)
 		value, _ := strconv.ParseFloat(node.AsNumericLiteral().text, 64)
 		return c.getFreshTypeOfLiteralType(c.getNumberLiteralType(value))
-	case SyntaxKindBigintLiteral:
+	case SyntaxKindBigIntLiteral:
 		// !!! checkGrammarBigIntLiteral(node as BigIntLiteral);
-		return c.getFreshTypeOfLiteralType(c.getBigintLiteralType(PseudoBigint{
+		return c.getFreshTypeOfLiteralType(c.getBigIntLiteralType(PseudoBigInt{
 			negative:    false,
-			base10Value: parsePseudoBigint(node.AsBigintLiteral().text),
+			base10Value: parsePseudoBigInt(node.AsBigIntLiteral().text),
 		}))
 	case SyntaxKindTrueKeyword:
 		return c.trueType
@@ -5449,10 +5449,10 @@ func (c *Checker) getNumberLiteralType(value float64) *Type {
 	return t
 }
 
-func (c *Checker) getBigintLiteralType(value PseudoBigint) *Type {
+func (c *Checker) getBigIntLiteralType(value PseudoBigInt) *Type {
 	t := c.bigintLiteralTypes[value]
 	if t == nil {
-		t = c.newLiteralType(TypeFlagsBigintLiteral, value, nil)
+		t = c.newLiteralType(TypeFlagsBigIntLiteral, value, nil)
 		c.bigintLiteralTypes[value] = t
 	}
 	return t
@@ -5486,7 +5486,7 @@ func (c *Checker) getBaseTypeOfLiteralType(t *Type) *Type {
 		return c.stringType
 	case t.flags&TypeFlagsNumberLiteral != 0:
 		return c.numberType
-	case t.flags&TypeFlagsBigintLiteral != 0:
+	case t.flags&TypeFlagsBigIntLiteral != 0:
 		return c.bigintType
 	case t.flags&TypeFlagsBooleanLiteral != 0:
 		return c.booleanType
@@ -5521,7 +5521,7 @@ func (c *Checker) getWidenedLiteralType(t *Type) *Type {
 		return c.stringType
 	case t.flags&TypeFlagsNumberLiteral != 0 && isFreshLiteralType(t):
 		return c.numberType
-	case t.flags&TypeFlagsBigintLiteral != 0 && isFreshLiteralType(t):
+	case t.flags&TypeFlagsBigIntLiteral != 0 && isFreshLiteralType(t):
 		return c.bigintType
 	case t.flags&TypeFlagsBooleanLiteral != 0 && isFreshLiteralType(t):
 		return c.booleanType

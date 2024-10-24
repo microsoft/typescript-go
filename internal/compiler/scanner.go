@@ -1354,7 +1354,7 @@ func (s *Scanner) scanNumber() SyntaxKind {
 		}
 	}
 	if bigIntSuffix != "" {
-		return SyntaxKindBigintLiteral
+		return SyntaxKindBigIntLiteral
 	}
 	return SyntaxKindNumericLiteral
 }
@@ -1482,7 +1482,7 @@ func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
 func (s *Scanner) scanBigIntSuffix() SyntaxKind {
 	if s.char() == 'n' {
 		s.pos++
-		return SyntaxKindBigintLiteral
+		return SyntaxKindBigIntLiteral
 	}
 	return SyntaxKindNumericLiteral
 }

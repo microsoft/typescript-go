@@ -375,7 +375,7 @@ func getOperatorPrecedence(nodeKind SyntaxKind, operatorKind SyntaxKind, hasArgu
 	case SyntaxKindAsExpression, SyntaxKindSatisfiesExpression:
 		return OperatorPrecedenceRelational
 	case SyntaxKindThisKeyword, SyntaxKindSuperKeyword, SyntaxKindIdentifier, SyntaxKindPrivateIdentifier, SyntaxKindNullKeyword,
-		SyntaxKindTrueKeyword, SyntaxKindFalseKeyword, SyntaxKindNumericLiteral, SyntaxKindBigintLiteral, SyntaxKindStringLiteral,
+		SyntaxKindTrueKeyword, SyntaxKindFalseKeyword, SyntaxKindNumericLiteral, SyntaxKindBigIntLiteral, SyntaxKindStringLiteral,
 		SyntaxKindArrayLiteralExpression, SyntaxKindObjectLiteralExpression, SyntaxKindFunctionExpression, SyntaxKindArrowFunction,
 		SyntaxKindClassExpression, SyntaxKindRegularExpressionLiteral, SyntaxKindNoSubstitutionTemplateLiteral, SyntaxKindTemplateExpression,
 		SyntaxKindParenthesizedExpression, SyntaxKindOmittedExpression, SyntaxKindJsxElement, SyntaxKindJsxSelfClosingElement, SyntaxKindJsxFragment:
@@ -691,7 +691,7 @@ func isLeftHandSideExpressionKind(kind SyntaxKind) bool {
 	case SyntaxKindPropertyAccessExpression, SyntaxKindElementAccessExpression, SyntaxKindNewExpression, SyntaxKindCallExpression,
 		SyntaxKindJsxElement, SyntaxKindJsxSelfClosingElement, SyntaxKindJsxFragment, SyntaxKindTaggedTemplateExpression, SyntaxKindArrayLiteralExpression,
 		SyntaxKindParenthesizedExpression, SyntaxKindObjectLiteralExpression, SyntaxKindClassExpression, SyntaxKindFunctionExpression, SyntaxKindIdentifier,
-		SyntaxKindPrivateIdentifier, SyntaxKindRegularExpressionLiteral, SyntaxKindNumericLiteral, SyntaxKindBigintLiteral, SyntaxKindStringLiteral,
+		SyntaxKindPrivateIdentifier, SyntaxKindRegularExpressionLiteral, SyntaxKindNumericLiteral, SyntaxKindBigIntLiteral, SyntaxKindStringLiteral,
 		SyntaxKindNoSubstitutionTemplateLiteral, SyntaxKindTemplateExpression, SyntaxKindFalseKeyword, SyntaxKindNullKeyword, SyntaxKindThisKeyword,
 		SyntaxKindTrueKeyword, SyntaxKindSuperKeyword, SyntaxKindNonNullExpression, SyntaxKindExpressionWithTypeArguments, SyntaxKindMetaProperty,
 		SyntaxKindImportKeyword, SyntaxKindMissingDeclaration:
@@ -1366,8 +1366,8 @@ func getTextOfIdentifierOrLiteral(node *Node) string {
 		return node.AsStringLiteral().text
 	case SyntaxKindNumericLiteral:
 		return node.AsNumericLiteral().text
-	case SyntaxKindBigintLiteral:
-		return node.AsBigintLiteral().text
+	case SyntaxKindBigIntLiteral:
+		return node.AsBigIntLiteral().text
 	case SyntaxKindNoSubstitutionTemplateLiteral:
 		return node.AsNoSubstitutionTemplateLiteral().text
 		// case isJsxNamespacedName(node):
@@ -2851,7 +2851,7 @@ func isExpressionNode(node *Node) bool {
 			return true
 		}
 		fallthrough
-	case SyntaxKindNumericLiteral, SyntaxKindBigintLiteral, SyntaxKindStringLiteral, SyntaxKindNoSubstitutionTemplateLiteral, SyntaxKindThisKeyword:
+	case SyntaxKindNumericLiteral, SyntaxKindBigIntLiteral, SyntaxKindStringLiteral, SyntaxKindNoSubstitutionTemplateLiteral, SyntaxKindThisKeyword:
 		return isInExpressionContext(node)
 	default:
 		return false
@@ -3302,7 +3302,7 @@ func isImportOrExportSpecifier(node *Node) bool {
 	return isImportSpecifier(node) || isExportSpecifier(node)
 }
 
-func parsePseudoBigint(stringValue string) string {
+func parsePseudoBigInt(stringValue string) string {
 	return stringValue // !!!
 }
 
