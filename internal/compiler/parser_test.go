@@ -2,12 +2,13 @@ package compiler
 
 import (
 	"fmt"
-	"github.com/microsoft/typescript-go/internal/repo"
-	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 )
 
 func BenchmarkParse(b *testing.B) {
