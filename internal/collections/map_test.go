@@ -13,7 +13,7 @@ func TestMap(t *testing.T) {
 	t.Parallel()
 
 	// Make a pointer; not required (the zero value works), but used here for clone testing.
-	m := &collections.InsertionOrderedMap[int, string]{}
+	m := &collections.Map[int, string]{}
 
 	assert.Assert(t, !m.Has(1))
 
