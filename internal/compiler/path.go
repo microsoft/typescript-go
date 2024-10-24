@@ -1,7 +1,7 @@
 package compiler
 
 import (
-	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -16,7 +16,7 @@ func hasTrailingDirectorySeparator(path string) bool {
 }
 
 func combinePaths(paths ...string) string {
-	return path.Join(paths...)
+	return filepath.Join(paths...)
 }
 
 func getPathComponents(path string, currentDirectory string) []string {
@@ -251,4 +251,14 @@ func ensureTrailingDirectorySeparator(path string) string {
 }
 func (p Path) ensureTrailingDirectorySeparator() Path {
 	return Path(ensureTrailingDirectorySeparator(string(p)))
+}
+
+func ConvertToRelativePath(absoluteOrRelativePath, basePath string, getCanonicalFileName func(fileName string) string) string {
+	/// !!!
+	/// May have some differences with original,
+	/// don't necessarily want dependencies on 'filepath'.
+	if resolvedRelativePath, err := filepath.Rel(basePath, getCanonicalFileName(absoluteOrRelativePath)); err == nil {
+		return resolvedRelativePath
+	}
+	return absoluteOrRelativePath
 }
