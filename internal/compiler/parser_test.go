@@ -2,6 +2,8 @@ package compiler
 
 import (
 	"fmt"
+	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,36 +24,21 @@ func BenchmarkParse(b *testing.B) {
 }
 
 func TestParseAndPrintNodes(t *testing.T) {
-	root := "../../_submodules/TypeScript"
-	local := "../../tests/baselines/local"
 	program := NewProgram(ProgramOptions{
-		RootPath: root,
+		RootPath: repo.TypeScriptSubmodulePath,
 		Options:  &CompilerOptions{Target: ScriptTargetESNext, ModuleKind: ModuleKindNodeNext}})
-	// Ensure the target directory exists
-	if err := os.MkdirAll(local, os.ModePerm); err != nil {
-		t.Errorf("Error creating directory %s: %v\n", local, err)
-		return
-	}
 	for _, sourceFile := range program.SourceFiles() {
-		printAST(t, root+"/", local, sourceFile)
+		path := filepath.ToSlash(sourceFile.fileName)
+		path = path[len(repo.TypeScriptSubmodulePath)+1:]
+		path = strings.ReplaceAll(path, "/", "_")
+		outputFileName := path + ".ast.txt"
+		baseline.Run(outputFileName, printAST(sourceFile), baseline.Options{})
 	}
 }
 
 // prefix specifies the directory to write the baseline
-func printAST(t *testing.T, sourceRoot string, targetRoot string, sourceFile *SourceFile) {
-	path := filepath.ToSlash(sourceFile.FileName())
-	if !strings.HasPrefix(path, sourceRoot) {
-		t.Errorf("Error: sourcePrefix %s not found in fileName %s\n", sourceRoot, path)
-		return
-	}
-	path = strings.TrimPrefix(path, sourceRoot)
-	path = strings.ReplaceAll(path, "/", "_")
-	outputFileName := targetRoot + "/" + path + ".ast.txt"
-	file, err := os.Create(outputFileName)
-	if err != nil {
-		t.Errorf("Error creating file %s: %v\n", outputFileName, err)
-	}
-	defer file.Close()
+func printAST(sourceFile *SourceFile) string {
+	sb := strings.Builder{}
 	var visit func(node *Node, indentation int) bool
 	visit = func(node *Node, indentation int) bool {
 		offset := 1
@@ -61,25 +48,26 @@ func printAST(t *testing.T, sourceRoot string, targetRoot string, sourceFile *So
 			offset = 0
 		case SyntaxKindIdentifier:
 			indent := strings.Repeat("  ", indentation)
-			fmt.Fprintf(file, "%s%s: '%s'\n", indent, skind, sourceFile.text[node.loc.pos:node.loc.end])
+			sb.WriteString(fmt.Sprintf("%s%s: '%s'\n", indent, skind, sourceFile.text[node.loc.pos:node.loc.end]))
 		default:
 			if isOmittedExpression(node) {
 				skind = "OmittedExpression"
 			}
 			indent := strings.Repeat("  ", indentation)
-			fmt.Fprintf(file, "%s%s\n", indent, skind)
+			sb.WriteString(fmt.Sprintf("%s%s\n", indent, skind))
 		}
 		// TODO: Include trivia in a more structured way than GetFullText// Visit child nodes with increased indentation
 		return node.ForEachChild(func(child *Node) bool {
 			if node.kind == SyntaxKindShorthandPropertyAssignment && node.AsShorthandPropertyAssignment().objectAssignmentInitializer == child {
 				indent := strings.Repeat("  ", indentation+offset)
-				fmt.Fprintf(file, "%sEqualsToken\n", indent) // print an extra line for the EqualsToken
+				sb.WriteString(fmt.Sprintf("%sEqualsToken\n", indent)) // print an extra line for the EqualsToken
 			}
 			visit(child, indentation+offset)
 			return false
 		})
 	}
 	visit(sourceFile.AsNode(), 0)
+	return sb.String()
 }
 
 func isOmittedExpression(node *Node) bool {
