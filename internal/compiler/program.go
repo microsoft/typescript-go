@@ -451,7 +451,7 @@ func FormatDiagnosticsWithColorAndContext(diags []*Diagnostic, formatOpts *Diagn
 				}
 
 				output.WriteString(formatOpts.NewLine)
-				WriteFlattenedDiagnosticMessage(&output, relatedInformation, formatOpts.NewLine
+				WriteFlattenedDiagnosticMessage(&output, relatedInformation, formatOpts.NewLine)
 			}
 		}
 	}
