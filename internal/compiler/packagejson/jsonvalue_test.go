@@ -1,0 +1,71 @@
+package packagejson_test
+
+import (
+	"encoding/json"
+	"testing"
+
+	jsonExp "github.com/go-json-experiment/json"
+	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
+	"gotest.tools/v3/assert"
+)
+
+func TestJSONValue(t *testing.T) {
+	testJSONValueWithUnmarshal(t, json.Unmarshal)
+	testJSONValueWithUnmarshal(t, func(in []byte, out any) error { return jsonExp.Unmarshal(in, out) })
+}
+
+func testJSONValueWithUnmarshal(t *testing.T, unmarshal func([]byte, any) error) {
+	type packageJson struct {
+		Private packagejson.JSONValue `json:"private"`
+		False   packagejson.JSONValue `json:"false"`
+		Name    packagejson.JSONValue `json:"name"`
+		Version packagejson.JSONValue `json:"version"`
+		Exports packagejson.JSONValue `json:"exports"`
+		Imports packagejson.JSONValue `json:"imports"`
+	}
+
+	var p packageJson
+
+	jsonString := `{
+		"private": true,
+		"false": false,
+		"name": "test",
+		"version": 2,
+		"exports": {
+			".": {
+				"import": "./test.ts",
+				"default": "./test.ts"
+			},
+			"./test": [
+				"./test1.ts",
+				"./test2.ts"
+			]
+		},
+		"imports": null
+	}`
+
+	err := unmarshal([]byte(jsonString), &p)
+	assert.NilError(t, err)
+
+	assert.Equal(t, p.Private.Type, packagejson.JSONValueTypeBoolean)
+	assert.Equal(t, p.Private.Value, true)
+
+	assert.Equal(t, p.Name.Type, packagejson.JSONValueTypeString)
+	assert.Equal(t, p.Name.Value, "test")
+
+	assert.Equal(t, p.Version.Type, packagejson.JSONValueTypeNumber)
+	assert.Equal(t, p.Version.Value, float64(2))
+
+	assert.Equal(t, p.Exports.Type, packagejson.JSONValueTypeObject)
+	assert.Equal(t, len(p.Exports.AsObject()), 2)
+	assert.Equal(t, p.Exports.AsObject()["."].Type, packagejson.JSONValueTypeObject)
+	assert.Equal(t, p.Exports.AsObject()["."].AsObject()["import"].Value, "./test.ts")
+
+	assert.Equal(t, p.Exports.AsObject()["./test"].Type, packagejson.JSONValueTypeArray)
+	assert.Equal(t, len(p.Exports.AsObject()["./test"].AsArray()), 2)
+	assert.Equal(t, p.Exports.AsObject()["./test"].AsArray()[0].Value, "./test1.ts")
+	assert.Equal(t, p.Exports.AsObject()["./test"].AsArray()[1].Value, "./test2.ts")
+
+	assert.Equal(t, p.Imports.Type, packagejson.JSONValueTypeNull)
+	assert.Equal(t, p.Imports.Value, nil)
+}
