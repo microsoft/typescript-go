@@ -4999,7 +4999,7 @@ func (c *Checker) getTypeFromIntersectionTypeNode(node *Node) *Type {
 			emptyIndex := slices.Index(types, c.emptyTypeLiteralType)
 			if emptyIndex >= 0 {
 				t := types[1-emptyIndex]
-				noSupertypeReduction = t.flags&(TypeFlagsString|TypeFlagsNumber|TypeFlagsBigint) != 0 || t.flags&TypeFlagsTemplateLiteral != 0 && c.isPatternLiteralType(t)
+				noSupertypeReduction = t.flags&(TypeFlagsString|TypeFlagsNumber|TypeFlagsBigInt) != 0 || t.flags&TypeFlagsTemplateLiteral != 0 && c.isPatternLiteralType(t)
 			}
 		}
 		links.resolvedType = c.getIntersectionTypeEx(types, ifElse(noSupertypeReduction, IntersectionFlagsNoSupertypeReduction, 0), alias)
@@ -5809,7 +5809,7 @@ func (c *Checker) removeRedundantLiteralTypes(types []*Type, includes TypeFlags,
 		flags := t.flags
 		remove := flags&(TypeFlagsStringLiteral|TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 && includes&TypeFlagsString != 0 ||
 			flags&TypeFlagsNumberLiteral != 0 && includes&TypeFlagsNumber != 0 ||
-			flags&TypeFlagsBigintLiteral != 0 && includes&TypeFlagsBigint != 0 ||
+			flags&TypeFlagsBigIntLiteral != 0 && includes&TypeFlagsBigInt != 0 ||
 			flags&TypeFlagsUniqueESSymbol != 0 && includes&TypeFlagsESSymbol != 0 ||
 			reduceVoidUndefined && flags&TypeFlagsUndefined != 0 && includes&TypeFlagsVoid != 0 ||
 			isFreshLiteralType(t) && containsType(types, t.AsLiteralType().regularType)
@@ -5909,7 +5909,7 @@ func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, 
 	}
 	if includes&TypeFlagsString != 0 && includes&(TypeFlagsStringLiteral|TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 ||
 		includes&TypeFlagsNumber != 0 && includes&TypeFlagsNumberLiteral != 0 ||
-		includes&TypeFlagsBigint != 0 && includes&TypeFlagsBigintLiteral != 0 ||
+		includes&TypeFlagsBigInt != 0 && includes&TypeFlagsBigIntLiteral != 0 ||
 		includes&TypeFlagsESSymbol != 0 && includes&TypeFlagsUniqueESSymbol != 0 ||
 		includes&TypeFlagsVoid != 0 && includes&TypeFlagsUndefined != 0 ||
 		includes&TypeFlagsIncludesEmptyObject != 0 && includes&TypeFlagsDefinitelyNonNullable != 0 {
@@ -6097,7 +6097,7 @@ func (c *Checker) removeRedundantSupertypes(types []*Type, includes TypeFlags) [
 		t := types[i]
 		remove := t.flags&TypeFlagsString != 0 && includes&(TypeFlagsStringLiteral|TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 ||
 			t.flags&TypeFlagsNumber != 0 && includes&TypeFlagsNumberLiteral != 0 ||
-			t.flags&TypeFlagsBigint != 0 && includes&TypeFlagsBigintLiteral != 0 ||
+			t.flags&TypeFlagsBigInt != 0 && includes&TypeFlagsBigIntLiteral != 0 ||
 			t.flags&TypeFlagsESSymbol != 0 && includes&TypeFlagsUniqueESSymbol != 0 ||
 			t.flags&TypeFlagsVoid != 0 && includes&TypeFlagsUndefined != 0 ||
 			c.isEmptyAnonymousObjectType(t) && includes&TypeFlagsDefinitelyNonNullable != 0
@@ -6189,7 +6189,7 @@ func (c *Checker) eachUnionContains(unionTypes []*Type, t *Type) bool {
 				primitive = c.stringType
 			case t.flags&(TypeFlagsEnum|TypeFlagsNumberLiteral) != 0:
 				primitive = c.numberType
-			case t.flags&TypeFlagsBigintLiteral != 0:
+			case t.flags&TypeFlagsBigIntLiteral != 0:
 				primitive = c.bigintType
 			case t.flags&TypeFlagsUniqueESSymbol != 0:
 				primitive = c.esSymbolType
@@ -6271,7 +6271,7 @@ func (c *Checker) isPatternLiteralPlaceholderType(t *Type) bool {
 		}
 		return seenPlaceholder
 	}
-	return t.flags&(TypeFlagsAny|TypeFlagsString|TypeFlagsNumber|TypeFlagsBigint) != 0 || c.isPatternLiteralType(t)
+	return t.flags&(TypeFlagsAny|TypeFlagsString|TypeFlagsNumber|TypeFlagsBigInt) != 0 || c.isPatternLiteralType(t)
 }
 
 func (c *Checker) isPatternLiteralType(t *Type) bool {
