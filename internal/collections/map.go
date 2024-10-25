@@ -123,7 +123,7 @@ func (m *Map[K, V]) Size() int {
 	return len(m.keys)
 }
 
-// Clone returns a copy of the map. Entries are shallow-copied.
+// Clone returns a shallow copy of the map.
 func (m *Map[K, V]) Clone() *Map[K, V] {
 	m2 := m.clone()
 	return &m2
