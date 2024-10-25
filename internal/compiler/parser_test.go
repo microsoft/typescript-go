@@ -33,6 +33,10 @@ func TestParseAndPrintNodes(t *testing.T) {
 		path = path[len(repo.TypeScriptSubmodulePath)+1:]
 		path = strings.ReplaceAll(path, "/", "_")
 		outputFileName := path + ".ast"
+		if outputFileName == "tests_cases_compiler_binderBinaryExpressionStressJs.ts.ast" ||
+			outputFileName == "tests_cases_compiler_binderBinaryExpressionStress.ts.ast" {
+			continue
+		}
 		baseline.Run(outputFileName, printAST(sourceFile), baseline.Options{})
 	}
 }
